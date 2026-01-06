@@ -40,12 +40,12 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="bg-gradient-to-r from-accent to-green-600 text-white">
-        <CardTitle>{isAdmin ? "Crear Nueva Incidencia" : "Reportar Incidencia"}</CardTitle>
-      </CardHeader>
+    <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="bg-gradient-to-r from-accent to-green-600 text-white">
+        <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">{isAdmin ? "Crear Nueva Incidencia" : "Reportar Incidencia"}</h3>
+      </div>
 
-      <CardContent className="pt-6">
+      <div className="p-6">
         {submitted && (
           <div className="bg-accent/10 border border-accent text-accent px-4 py-3 rounded-md mb-4 text-sm">
             ✓ Incidencia creada exitosamente
@@ -116,7 +116,7 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
             {isAdmin ? "Crear Incidencia" : "Reportar Problema"}
           </Button>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

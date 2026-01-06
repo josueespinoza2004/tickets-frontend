@@ -57,12 +57,12 @@ export default function UsersManagement({ users, onAddUser }) {
 
       {/* Formulario de nuevo usuario */}
       {showForm && (
-        <Card className="bg-secondary/30 border-primary">
-          <CardHeader className="bg-primary text-white">
-            <CardTitle>Crear Nuevo Usuario</CardTitle>
-          </CardHeader>
+        <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden bg-secondary/30 border-primary">
+          <div className="bg-primary text-white">
+            <h3 className="text-lg font-semibold px-6 py-4">Crear Nuevo Usuario</h3>
+          </div>
 
-          <CardContent className="pt-6">
+          <div className="p-6">
             {submitted && (
               <div className="bg-accent/10 border border-accent text-accent px-4 py-3 rounded-md mb-4 text-sm">
                 ✓ Usuario creado exitosamente
@@ -133,17 +133,17 @@ export default function UsersManagement({ users, onAddUser }) {
                 </Button>
               </div>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Lista de usuarios */}
-      <Card>
-        <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-          <CardTitle>Usuarios del Sistema</CardTitle>
-        </CardHeader>
+      <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+          <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Usuarios del Sistema</h3>
+        </div>
 
-        <CardContent className="pt-6">
+        <div className="p-6">
           <div className="space-y-3">
             {users.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">No hay usuarios registrados</div>
@@ -171,8 +171,8 @@ export default function UsersManagement({ users, onAddUser }) {
           {users.length > 0 && (
             <div className="text-xs text-muted-foreground text-center mt-4">Total: {users.length} usuarios</div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

@@ -48,12 +48,12 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-        <CardTitle className="text-2xl">{isAdmin ? "Todas las Incidencias" : "Mis Incidencias"}</CardTitle>
-      </CardHeader>
+    <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+        <h3 className="text-lg sm:text-2xl font-semibold px-6 py-4">{isAdmin ? "Todas las Incidencias" : "Mis Incidencias"}</h3>
+      </div>
 
-      <CardContent className="pt-6">
+      <div className="p-6">
         {/* Filtros */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div>
@@ -128,7 +128,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
             Mostrando {filteredTickets.length} de {tickets.length} incidencias
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

@@ -78,12 +78,12 @@ export default function ReportsView({ tickets, isAdmin }) {
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <Card>
-        <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-          <CardTitle>Filtros de Búsqueda</CardTitle>
-        </CardHeader>
+      <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+          <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Filtros de Búsqueda</h3>
+        </div>
 
-        <CardContent className="pt-6">
+        <div className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1">Desde</label>
@@ -158,16 +158,16 @@ export default function ReportsView({ tickets, isAdmin }) {
               📥 Descargar Reporte
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* Tabla de resultados */}
-      <Card>
-        <CardHeader className="bg-gradient-to-r from-secondary to-blue-300">
-          <CardTitle>Resultados ({filteredTickets.length} incidencias)</CardTitle>
-        </CardHeader>
+      <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-secondary to-blue-300">
+          <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Resultados ({filteredTickets.length} incidencias)</h3>
+        </div>
 
-        <CardContent className="pt-6">
+        <div className="p-6">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-muted border-b border-border">
@@ -226,8 +226,8 @@ export default function ReportsView({ tickets, isAdmin }) {
               </div>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

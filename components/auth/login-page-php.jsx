@@ -61,10 +61,10 @@ export default function LoginPage({ onLoginSuccess }) {
         </div>
 
         {/* Card de Login */}
-        <Card className="shadow-2xl border-0">
-          <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white rounded-t-lg">
-            <CardTitle className="text-2xl">Iniciar Sesión</CardTitle>
-          </CardHeader>
+        <Card className="shadow-2xl border-0 overflow-hidden">
+          <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+            <h3 className="text-2xl font-semibold px-6 py-4">Iniciar Sesión</h3>
+          </div>
 
           <CardContent className="pt-8">
             {error && (

@@ -46,13 +46,13 @@ export default function Statistics({ tickets }) {
       </div>
 
       {/* Gráficos de estado */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-            <CardTitle>Incidencias por Tipo</CardTitle>
-          </CardHeader>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+            <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Incidencias por Tipo</h3>
+          </div>
 
-          <CardContent className="pt-6">
+          <div className="p-6">
             <div className="space-y-3">
               {Object.entries(stats.byPriority).map(([priority, count]) => (
                 <div key={priority}>
@@ -71,15 +71,15 @@ export default function Statistics({ tickets }) {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="bg-gradient-to-r from-secondary to-blue-300">
-            <CardTitle>Incidencias por Sucursal</CardTitle>
-          </CardHeader>
+        <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+          <div className="bg-gradient-to-r from-secondary to-blue-300">
+            <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Incidencias por Sucursal</h3>
+          </div>
 
-          <CardContent className="pt-6">
+          <div className="p-6">
             <div className="space-y-3">
               {Object.entries(stats.bySucursal).map(([sucursal, count]) => (
                 <div key={sucursal}>
@@ -96,17 +96,17 @@ export default function Statistics({ tickets }) {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Tabla de resumen */}
-      <Card>
-        <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-          <CardTitle>Resumen General</CardTitle>
-        </CardHeader>
+      <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+          <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Resumen General</h3>
+        </div>
 
-        <CardContent className="pt-6">
+        <div className="p-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-secondary/20 rounded-lg">
               <p className="text-sm text-muted-foreground mb-1">Tasa de Completación</p>
@@ -130,8 +130,8 @@ export default function Statistics({ tickets }) {
               <p className="text-2xl font-bold text-gray-600">{stats.byStatus["Sin Empezar"]}</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

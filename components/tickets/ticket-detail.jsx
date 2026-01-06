@@ -30,18 +30,18 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
   }
 
   return (
-    <Card>
-      <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white flex flex-row items-center justify-between">
+    <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="bg-gradient-to-r from-primary to-blue-600 text-white flex flex-row items-center justify-between px-6 py-4">
         <div>
-          <CardTitle className="text-2xl">Incidencia #{ticket.id}</CardTitle>
-          <p className="text-blue-100">{ticket.name}</p>
+          <h3 className="text-lg sm:text-2xl font-semibold">Incidencia #{ticket.id}</h3>
+          <p className="text-blue-100 text-sm sm:text-base">{ticket.name}</p>
         </div>
-        <Button onClick={onBack} variant="outline" className="bg-white text-primary hover:bg-white/90">
+        <Button onClick={onBack} variant="outline" className="bg-white text-primary hover:bg-white/90 text-sm sm:text-base">
           ← Volver
         </Button>
-      </CardHeader>
+      </div>
 
-      <CardContent className="pt-6">
+      <div className="p-6">
         <div className="grid grid-cols-2 gap-6 mb-6">
           {/* Información básica */}
           <div>
@@ -150,7 +150,7 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
             )}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

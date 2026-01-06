@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function UserProfile({ user }) {
   return (
-    <Card>
-      <CardHeader className="bg-gradient-to-r from-primary to-blue-600 text-white">
-        <CardTitle className="text-2xl">Mi Perfil</CardTitle>
-      </CardHeader>
+    <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
+      <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
+        <h3 className="text-lg sm:text-2xl font-semibold px-6 py-4">Mi Perfil</h3>
+      </div>
 
-      <CardContent className="pt-6">
+      <div className="p-6">
         <div className="max-w-md">
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
             <div className="w-16 h-16 bg-gradient-to-br from-primary to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
@@ -51,7 +51,7 @@ export default function UserProfile({ user }) {
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
