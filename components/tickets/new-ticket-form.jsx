@@ -1,20 +1,45 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+
+import { fetchApi } from "@/lib/api"
 
 export default function NewTicketForm({ onSubmit, isAdmin }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     priority: "Media",
-    sucursal: "Nueva Guinea",
+    sucursal: "", // Default empty, wait for load
   })
 
   const [submitted, setSubmitted] = useState(false)
 
-  const sucursales = ["Nueva Guinea", "San Carlos", "Muelle de los Bueyes", "El Rama"]
+  // State for dynamic branches
+  const [sucursales, setSucursales] = useState([])
+  const [loadingBranches, setLoadingBranches] = useState(true)
+
+  // Fetch branches on mount
+  useEffect(() => {
+    async function loadBranches() {
+      try {
+        const data = await fetchApi('get_branches.php')
+        if (Array.isArray(data)) {
+          setSucursales(data)
+          // Set default selected branch if available
+          if (data.length > 0) {
+            setFormData(prev => ({ ...prev, sucursal: data[0].id }))
+          }
+        }
+      } catch (error) {
+        console.error("Error loading branches:", error)
+      } finally {
+        setLoadingBranches(false)
+      }
+    }
+    loadBranches()
+  }, [])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -101,11 +126,15 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              {sucursales.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
+              {loadingBranches ? (
+                <option>Cargando sucursales...</option>
+              ) : (
+                sucursales.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
