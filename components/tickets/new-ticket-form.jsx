@@ -24,7 +24,7 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
   useEffect(() => {
     async function loadBranches() {
       try {
-        const data = await fetchApi('get_branches.php')
+        const data = await fetchApi('/api/get_branches.php')
         if (Array.isArray(data)) {
           setSucursales(data)
           // Set default selected branch if available

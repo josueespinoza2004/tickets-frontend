@@ -9,8 +9,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Cargar usuario desde localStorage
-    const storedUser = localStorage.getItem("currentUser")
+    // Cargar usuario desde sessionStorage
+    const storedUser = sessionStorage.getItem("currentUser")
     if (storedUser) {
       setUser(JSON.parse(storedUser))
     }
@@ -35,8 +35,9 @@ export default function Home() {
   return (
     <Dashboard
       user={user}
-      onLogout={() => {
-        localStorage.removeItem("currentUser")
+      onLogout={async () => {
+        const { authAPI } = await import("@/lib/api")
+        await authAPI.logout()
         setUser(null)
       }}
     />

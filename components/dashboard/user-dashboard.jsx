@@ -11,16 +11,17 @@ export default function UserDashboard({ currentSection }) {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("currentUser"))
+  useEffect(() => {
+    const storedUser = JSON.parse(sessionStorage.getItem("currentUser"))
     setUser(storedUser)
 
-    const storedTickets = JSON.parse(localStorage.getItem("tickets")) || []
+    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
     const userTickets = storedTickets.filter((t) => t.userId === storedUser?.id)
     setTickets(userTickets)
   }, [])
 
   const handleNewTicket = (newTicket) => {
-    const storedTickets = JSON.parse(localStorage.getItem("tickets")) || []
+    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
     const ticket = {
       ...newTicket,
       id: Date.now(),
@@ -30,7 +31,7 @@ export default function UserDashboard({ currentSection }) {
       responsible: "",
     }
     storedTickets.push(ticket)
-    localStorage.setItem("tickets", JSON.stringify(storedTickets))
+    sessionStorage.setItem("tickets", JSON.stringify(storedTickets))
     setTickets([...tickets, ticket])
   }
 

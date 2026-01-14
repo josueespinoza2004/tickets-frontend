@@ -8,25 +8,28 @@ export default function LoginPage({ onLoginSuccess }) {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
 
-  // Usuarios de demostración
-  const defaultUsers = [
-    { id: 1, email: "admin@coopefacsa.com", password: "admin123", role: "admin", name: "Administrador" },
-    { id: 2, email: "user@coopefacsa.com", password: "user123", role: "user", name: "Juan Pérez" },
-  ]
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
     setError("")
 
-    const user = defaultUsers.find((u) => u.email === email && u.password === password)
+    try {
+      const { fetchApi } = await import("@/lib/api") // Import dinámico para asegurar acceso a fetchApi
+      const response = await fetchApi("/auth/login.php", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      })
 
-    if (user) {
-      const { password, ...userWithoutPassword } = user
-      localStorage.setItem("currentUser", JSON.stringify(userWithoutPassword))
-      localStorage.setItem("allUsers", JSON.stringify(defaultUsers))
-      onLoginSuccess(userWithoutPassword)
-    } else {
-      setError("Email o contraseña incorrectos")
+      if (response && response.success) {
+        const user = response.user
+        sessionStorage.setItem("currentUser", JSON.stringify(user))
+        sessionStorage.setItem("authToken", response.token) // Guardar token para peticiones
+        onLoginSuccess(user)
+      } else {
+         setError(response?.error || "Error al iniciar sesión")
+      }
+    } catch (err) {
+      console.error(err)
+      setError("Email o contraseña incorrectos (o error de servidor)")
     }
   }
 
