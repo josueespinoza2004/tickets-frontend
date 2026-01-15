@@ -63,16 +63,16 @@ export default function Dashboard({ user, onLogout }) {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
-            <div className="hidden sm:block">
+            {/* <div className="hidden sm:block">
               <span className="text-sm text-muted-foreground">{user?.name || user?.email}</span>
-            </div>
-            <span
+            </div> */}
+            {/* <span
               className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
                 isAdmin ? "bg-destructive/10 text-destructive" : "bg-accent/10 text-accent"
               }`}
             >
               {isAdmin ? "Admin" : "Usuario"}
-            </span>
+            </span> */}
             <Button
               onClick={onLogout}
               variant="outline"

@@ -78,6 +78,8 @@ export default function LoginPage({ onLoginSuccess }) {
                 <label className="block text-sm font-medium text-foreground mb-1">Email</label>
                 <input
                   type="email"
+                  name="email"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="usuario@coopefacsa.com"
@@ -90,6 +92,8 @@ export default function LoginPage({ onLoginSuccess }) {
                 <label className="block text-sm font-medium text-foreground mb-1">Contraseña</label>
                 <input
                   type="password"
+                  name="password"
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"

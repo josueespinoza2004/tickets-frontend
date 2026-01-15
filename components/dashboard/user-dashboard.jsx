@@ -11,28 +11,41 @@ export default function UserDashboard({ currentSection }) {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-  useEffect(() => {
-    const storedUser = JSON.parse(sessionStorage.getItem("currentUser"))
-    setUser(storedUser)
+    async function loadData() {
+        const storedUser = JSON.parse(sessionStorage.getItem("currentUser"))
+        setUser(storedUser)
 
-    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
-    const userTickets = storedTickets.filter((t) => t.userId === storedUser?.id)
-    setTickets(userTickets)
+        if (storedUser) {
+            try {
+                const { ticketsAPI } = await import("@/lib/api")
+                const data = await ticketsAPI.getAll()
+                // API fetches filtered tickets for non-admins automatically, so we trust backend or filter if needed?
+                // Backend "api/tickets.php" logic: "if (!$isAdmin) ... WHERE creator_id = userId"
+                // So getAll() returns only user's tickets.
+                if (Array.isArray(data)) {
+                    setTickets(data)
+                }
+            } catch (e) {
+                console.error("Error loading tickets", e)
+            }
+        }
+    }
+    loadData()
   }, [])
 
-  const handleNewTicket = (newTicket) => {
-    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
-    const ticket = {
-      ...newTicket,
-      id: Date.now(),
-      userId: user?.id,
-      createdAt: new Date().toISOString(),
-      status: "Sin Empezar",
-      responsible: "",
+  const handleNewTicket = async (newTicketData) => {
+    try {
+        const { ticketsAPI } = await import("@/lib/api")
+        // newTicketData is FormData
+        await ticketsAPI.create(newTicketData)
+        
+        // Reload list
+        const data = await ticketsAPI.getAll()
+        setTickets(data)
+    } catch (error) {
+        console.error("Error creating ticket:", error)
+        alert("Error al crear ticket")
     }
-    storedTickets.push(ticket)
-    sessionStorage.setItem("tickets", JSON.stringify(storedTickets))
-    setTickets([...tickets, ticket])
   }
 
   if (!user) return <div className="text-center py-8">Cargando...</div>
@@ -45,7 +58,7 @@ export default function UserDashboard({ currentSection }) {
             <TicketsView tickets={tickets} isAdmin={false} />
           </div>
           <div className="order-1 xl:order-2">
-            <NewTicketForm onSubmit={handleNewTicket} />
+            <NewTicketForm onSubmit={handleNewTicket} user={user} isAdmin={false} />
           </div>
         </div>
       )}

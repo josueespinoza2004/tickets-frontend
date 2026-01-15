@@ -100,7 +100,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{ticket.name}</h3>
+                    <h3 className="font-semibold text-foreground">{ticket.title}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2">{ticket.description}</p>
                   </div>
                   <span className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold ${statusColors[ticket.status]}`}>
@@ -111,9 +111,20 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex gap-4">
                     <span className={`font-semibold ${priorityColors[ticket.priority]}`}>{ticket.priority}</span>
-                    <span className="text-muted-foreground">{ticket.sucursal}</span>
+                    <span className="text-muted-foreground">{ticket.branch_name}</span>
                     <span className="text-muted-foreground">
-                      {new Date(ticket.createdAt).toLocaleDateString("es-ES")}
+                      {(() => {
+                        const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt;
+                        const safeDate = (typeof dateVal === 'string' && dateVal.length === 10) 
+                          ? dateVal + 'T00:00:00' 
+                          : dateVal;
+                        
+                        return dateVal ? new Date(safeDate).toLocaleDateString("es-ES", {
+                          year: "numeric",
+                          month: "short", 
+                          day: "numeric",
+                        }) : "Fecha desconocida";
+                      })()}
                     </span>
                   </div>
                   <span className="text-primary font-medium">#{ticket.id}</span>

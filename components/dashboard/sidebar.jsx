@@ -34,8 +34,8 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
               />
             </div>
             <div>
-              <h1 className="font-bold text-sm">COOPEFACSA</h1>
-              <p className="text-xs opacity-70">Sistema IT</p>
+              <h1 className="font-bold text-sm">Gestion de Tickets y Incidencias</h1>
+              <p className="text-xs opacity-70">COOPEFACSA R.L</p>
             </div>
           </div>
           {/* Botón cerrar solo visible en móvil */}
@@ -72,7 +72,7 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
       <div className="p-3 sm:p-4 border-t border-primary-foreground/15">
         <div className="bg-primary-foreground/10 rounded-lg p-2.5 sm:p-3 mb-2 sm:mb-3">
           <p className="text-xs opacity-70">Conectado como</p>
-          <p className="font-semibold text-xs sm:text-sm truncate">{user?.name || user?.email}</p>
+          <p className="font-semibold text-xs sm:text-sm truncate">{user?.full_name}</p>
           <p className="text-xs opacity-70 mt-1">
             {isAdmin ? "Administrador" : "Usuario"}
           </p>

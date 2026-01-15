@@ -6,39 +6,61 @@ import { Button } from "@/components/ui/button"
 
 import { fetchApi } from "@/lib/api"
 
-export default function NewTicketForm({ onSubmit, isAdmin }) {
+export default function NewTicketForm({ onSubmit, isAdmin, user }) {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    priority: "Media",
-    sucursal: "", // Default empty, wait for load
+    priority: "Baja", // Default to 'Baja' explicitly
+    branch_id: user?.branch_id || "", 
+    area_id: "", 
+    incident_date: new Date().toISOString().split('T')[0], // Default to today
+    evidence_file: null
   })
 
   const [submitted, setSubmitted] = useState(false)
 
   // State for dynamic branches
   const [sucursales, setSucursales] = useState([])
+  const [areas, setAreas] = useState([])
   const [loadingBranches, setLoadingBranches] = useState(true)
+  const [loadingAreas, setLoadingAreas] = useState(true)
 
-  // Fetch branches on mount
+  // Fetch branches and areas
   useEffect(() => {
-    async function loadBranches() {
+    async function loadData() {
       try {
-        const data = await fetchApi('/api/get_branches.php')
-        if (Array.isArray(data)) {
-          setSucursales(data)
-          // Set default selected branch if available
-          if (data.length > 0) {
-            setFormData(prev => ({ ...prev, sucursal: data[0].id }))
+        const [branchesData, areasData] = await Promise.all([
+            fetchApi('/api/get_branches.php'),
+            fetchApi('/api/get_areas.php')
+        ])
+        
+        if (Array.isArray(branchesData)) {
+          setSucursales(branchesData)
+          if (branchesData.length > 0) {
+            // If user has a branch, set it. Otherwise default to first one.
+            if (user?.branch_id) {
+               setFormData(prev => ({ ...prev, branch_id: user.branch_id }))
+            } else {
+               setFormData(prev => ({ ...prev, branch_id: branchesData[0].id }))
+            }
           }
         }
+        
+        if (Array.isArray(areasData)) {
+            setAreas(areasData)
+            if (areasData.length > 0) {
+              setFormData(prev => ({ ...prev, area_id: areasData[0].id }))
+            }
+        }
+
       } catch (error) {
-        console.error("Error loading branches:", error)
+        console.error("Error loading form data:", error)
       } finally {
         setLoadingBranches(false)
+        setLoadingAreas(false)
       }
     }
-    loadBranches()
+    loadData()
   }, [])
 
   const handleChange = (e) => {
@@ -51,14 +73,30 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (formData.name.trim() && formData.description.trim()) {
-      onSubmit(formData)
+    if (formData.name.trim()) {
+      
+      const data = new FormData()
+      data.append('title', formData.name)
+      // If description is empty, send a default text to satisfy DB NOT NULL
+      data.append('description', formData.description.trim() || "Sin descripción proporcionada")
+      data.append('priority', formData.priority)
+      if (formData.branch_id) data.append('branch_id', formData.branch_id)
+      if (formData.area_id) data.append('area_id', formData.area_id)
+      if (formData.incident_date) data.append('incident_date', formData.incident_date)
+      if (formData.evidence_file) data.append('evidence_file', formData.evidence_file)
+
+      onSubmit(data)
+      
       setFormData({
         name: "",
         description: "",
-        priority: "Media",
-        sucursal: "Nueva Guinea",
+        priority: "Baja",
+        branch_id: user?.branch_id || (sucursales.length > 0 ? sucursales[0].id : ""),
+        area_id: areas.length > 0 ? areas[0].id : "",
+        incident_date: new Date().toISOString().split('T')[0],
+        evidence_file: null
       })
+      // Reset file input manually if needed using ref, but simply clearing state ok for now
       setSubmitted(true)
       setTimeout(() => setSubmitted(false), 3000)
     }
@@ -92,37 +130,49 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Descripción *</label>
+            <label className="block text-sm font-medium text-foreground mb-1">Descripción (Opcional)</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Describe el problema en detalle..."
-              rows="4"
+              rows="4"    
               className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-              required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Tipo de Incidencia</label>
-            <select
-              name="priority"
-              value={formData.priority}
+            <label className="block text-sm font-medium text-foreground mb-1">Fecha de la Incidencia</label>
+            <input
+              type="date"
+              name="incident_date"
+              value={formData.incident_date}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="Baja">Baja</option>
-              <option value="Media">Media</option>
-              <option value="Alta">Alta</option>
-            </select>
+            />
           </div>
+
+          {isAdmin && (
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1">Tipo de Incidencia</label>
+              <select
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="Baja">Baja</option>
+                <option value="Media">Media</option>
+                <option value="Alta">Alta</option>
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Sucursal</label>
             <select
-              name="sucursal"
-              value={formData.sucursal}
+              name="branch_id"
+              value={formData.branch_id}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
             >
@@ -136,6 +186,16 @@ export default function NewTicketForm({ onSubmit, isAdmin }) {
                 ))
               )}
             </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">Evidencia (Foto/Archivo)</label>
+            <input
+              type="file"
+              name="evidence_file"
+              onChange={(e) => setFormData(prev => ({ ...prev, evidence_file: e.target.files[0] }))}
+              className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+            />
           </div>
 
           <Button

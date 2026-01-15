@@ -14,46 +14,50 @@ export default function AdminDashboard({ currentSection }) {
   useEffect(() => {
     async function loadData() {
         try {
+            const { usersAPI, ticketsAPI } = await import("@/lib/api")
+            
             // Cargar usuarios
-            const { usersAPI } = await import("@/lib/api")
             const usersData = await usersAPI.getAll()
             if (Array.isArray(usersData)) {
                 setUsers(usersData)
             }
+
+            // Cargar tickets
+            const ticketsData = await ticketsAPI.getAll()
+            if (Array.isArray(ticketsData)) {
+                setTickets(ticketsData)
+            }
         } catch (error) {
-            console.error("Error loading users:", error)
+            console.error("Error loading data:", error)
         }
     }
     loadData()
-
-    // Tickets siguen en sessionStorage por ahora hasta que implementemos ticketsAPI fully
-    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
-    setTickets(storedTickets)
   }, [])
 
-  const handleNewTicket = (newTicket) => {
-    // ... (mantener lógica de tickets por ahora o actualizar si create_ticket ya se usa)
-    // El usuario pidió Auth y Users primero. Tickets se hará después.
-    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
-    const ticket = {
-      ...newTicket,
-      id: Date.now(),
-      createdAt: new Date().toISOString(),
-      status: "Sin Empezar",
-      responsible: "",
+  const handleNewTicket = async (newTicketData) => {
+    try {
+        const { ticketsAPI } = await import("@/lib/api")
+        await ticketsAPI.create(newTicketData)
+        
+        // Recargar tickets
+        const data = await ticketsAPI.getAll()
+        setTickets(data)
+    } catch (error) {
+        console.error("Error creating ticket:", error)
+        alert("Error al crear ticket")
     }
-    storedTickets.push(ticket)
-    sessionStorage.setItem("tickets", JSON.stringify(storedTickets))
-    setTickets([...tickets, ticket])
   }
 
-  const handleUpdateTicket = (updatedTicket) => {
-    const storedTickets = JSON.parse(sessionStorage.getItem("tickets")) || []
-    const index = storedTickets.findIndex((t) => t.id === updatedTicket.id)
-    if (index !== -1) {
-      storedTickets[index] = updatedTicket
-      sessionStorage.setItem("tickets", JSON.stringify(storedTickets))
-      setTickets(storedTickets)
+  const handleUpdateTicket = async (updatedTicket) => {
+    try {
+        const { ticketsAPI } = await import("@/lib/api")
+        await ticketsAPI.update(updatedTicket.id, updatedTicket)
+        
+        // Update local state optimistic or refetch
+        setTickets(prev => prev.map(t => t.id === updatedTicket.id ? updatedTicket : t))
+    } catch (error) {
+        console.error("Error updating ticket:", error)
+        alert("Error al actualizar ticket")
     }
   }
 
