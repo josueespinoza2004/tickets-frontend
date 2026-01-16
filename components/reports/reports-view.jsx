@@ -173,26 +173,25 @@ export default function ReportsView({ tickets, isAdmin }) {
               <thead className="bg-muted border-b border-border">
                 <tr>
                   <th className="px-4 py-2 text-left font-semibold">ID</th>
-                  <th className="px-4 py-2 text-left font-semibold">Nombre</th>
-                  <th className="px-4 py-2 text-left font-semibold">Descripción</th>
+                  <th className="px-4 py-2 text-left font-semibold">Nombre de tarea</th>
                   <th className="px-4 py-2 text-left font-semibold">Estado</th>
-                  <th className="px-4 py-2 text-left font-semibold">Tipo</th>
-                  <th className="px-4 py-2 text-left font-semibold">Sucursal</th>
                   <th className="px-4 py-2 text-left font-semibold">Responsable</th>
                   <th className="px-4 py-2 text-left font-semibold">Fecha</th>
+                  <th className="px-4 py-2 text-left font-semibold">Tipo</th>
+                  <th className="px-4 py-2 text-left font-semibold">Sucursal</th>
+                  <th className="px-4 py-2 text-left font-semibold">Descripción</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredTickets.map((ticket) => (
                   <tr key={ticket.id} className="border-b border-border hover:bg-secondary/30">
                     <td className="px-4 py-2">#{ticket.id}</td>
-                    <td className="px-4 py-2">{ticket.title}</td>
-                    <td className="px-4 py-2 max-w-xs truncate" title={ticket.description}>{ticket.description}</td>
+                    <td className="px-4 py-2 font-medium">{ticket.title}</td>
                     <td className="px-4 py-2">
                       <span
-                        className={`px-2 py-1 rounded text-xs font-semibold ${
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
                           ticket.status === "Listo"
-                            ? "bg-accent/20 text-accent"
+                            ? "bg-green-100 text-green-800"
                             : ticket.status === "En curso"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-gray-100 text-gray-800"
@@ -201,30 +200,37 @@ export default function ReportsView({ tickets, isAdmin }) {
                         {ticket.status}
                       </span>
                     </td>
-                    <td className="px-4 py-2">
-                      <span
-                        className={`font-semibold ${
-                          ticket.priority === "Alta"
-                            ? "text-destructive"
-                            : ticket.priority === "Media"
-                              ? "text-yellow-600"
-                              : "text-accent"
-                        }`}
-                      >
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2">{ticket.branch_name}</td>
-                    <td className="px-4 py-2">{ticket.assigned_to_name || "—"}</td>
-                    <td className="px-4 py-2">
+                    <td className="px-4 py-2 text-xs">{ticket.assigned_to_name || "—"}</td>
+                    <td className="px-4 py-2 text-xs whitespace-nowrap">
                       {(() => {
                         const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt;
                         const safeDate = (typeof dateVal === 'string' && dateVal.length === 10) 
                           ? dateVal + 'T00:00:00' 
                           : dateVal;
                         
-                        return dateVal ? new Date(safeDate).toLocaleDateString("es-ES") : "Fecha desconocida";
+                        return dateVal ? new Date(safeDate).toLocaleDateString("es-ES") : "—";
                       })()}
+                    </td>
+                    <td className="px-4 py-2">
+                       <span
+                        className={`px-2 py-0.5 rounded text-[10px] font-semibold sentence-case ${
+                          ticket.priority === "Alta"
+                            ? "bg-red-100 text-red-800"
+                            : ticket.priority === "Media"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {ticket.priority}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                        <span className="bg-gray-100 text-gray-800 px-2 py-0.5 rounded text-[10px]">
+                            {ticket.branch_name}
+                        </span>
+                    </td>
+                    <td className="px-4 py-2 text-xs text-muted-foreground max-w-xs truncate" title={ticket.description}>
+                        {ticket.description}
                     </td>
                   </tr>
                 ))}
