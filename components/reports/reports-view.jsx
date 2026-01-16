@@ -174,6 +174,7 @@ export default function ReportsView({ tickets, isAdmin }) {
                 <tr>
                   <th className="px-4 py-2 text-left font-semibold">ID</th>
                   <th className="px-4 py-2 text-left font-semibold">Nombre</th>
+                  <th className="px-4 py-2 text-left font-semibold">Descripción</th>
                   <th className="px-4 py-2 text-left font-semibold">Estado</th>
                   <th className="px-4 py-2 text-left font-semibold">Tipo</th>
                   <th className="px-4 py-2 text-left font-semibold">Sucursal</th>
@@ -185,7 +186,8 @@ export default function ReportsView({ tickets, isAdmin }) {
                 {filteredTickets.map((ticket) => (
                   <tr key={ticket.id} className="border-b border-border hover:bg-secondary/30">
                     <td className="px-4 py-2">#{ticket.id}</td>
-                    <td className="px-4 py-2">{ticket.name}</td>
+                    <td className="px-4 py-2">{ticket.title}</td>
+                    <td className="px-4 py-2 max-w-xs truncate" title={ticket.description}>{ticket.description}</td>
                     <td className="px-4 py-2">
                       <span
                         className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -212,9 +214,18 @@ export default function ReportsView({ tickets, isAdmin }) {
                         {ticket.priority}
                       </span>
                     </td>
-                    <td className="px-4 py-2">{ticket.sucursal}</td>
-                    <td className="px-4 py-2">{ticket.responsible || "—"}</td>
-                    <td className="px-4 py-2">{new Date(ticket.createdAt).toLocaleDateString("es-ES")}</td>
+                    <td className="px-4 py-2">{ticket.branch_name}</td>
+                    <td className="px-4 py-2">{ticket.assigned_to_name || "—"}</td>
+                    <td className="px-4 py-2">
+                      {(() => {
+                        const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt;
+                        const safeDate = (typeof dateVal === 'string' && dateVal.length === 10) 
+                          ? dateVal + 'T00:00:00' 
+                          : dateVal;
+                        
+                        return dateVal ? new Date(safeDate).toLocaleDateString("es-ES") : "Fecha desconocida";
+                      })()}
+                    </td>
                   </tr>
                 ))}
               </tbody>
