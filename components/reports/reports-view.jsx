@@ -12,6 +12,10 @@ export default function ReportsView({ tickets, isAdmin }) {
   const [priorityFilter, setPriorityFilter] = useState("todos")
   const [sucursalFilter, setSucursalFilter] = useState("todos")
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+
   const sucursales = ["Nueva Guinea", "San Carlos", "Muelle de los Bueyes", "El Rama"]
 
   const applyFilters = () => {
@@ -40,6 +44,17 @@ export default function ReportsView({ tickets, isAdmin }) {
     }
 
     setFilteredTickets(filtered)
+    setCurrentPage(1) // Reset to page 1 on filter change
+  }
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentTickets = filteredTickets.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredTickets.length / itemsPerPage)
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber)
   }
 
   useEffect(() => {
@@ -183,7 +198,7 @@ export default function ReportsView({ tickets, isAdmin }) {
                 </tr>
               </thead>
               <tbody>
-                {filteredTickets.map((ticket) => (
+                {currentTickets.map((ticket) => (
                   <tr key={ticket.id} className="border-b border-border hover:bg-secondary/30">
                     <td className="px-4 py-2">#{ticket.id}</td>
                     <td className="px-4 py-2 font-medium">{ticket.title}</td>
@@ -240,6 +255,41 @@ export default function ReportsView({ tickets, isAdmin }) {
             {filteredTickets.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 No hay incidencias que coincidan con los filtros aplicados
+              </div>
+            )}
+            
+            {filteredTickets.length > 0 && (
+              <div className="flex flex-col items-center gap-4 mt-6">
+                  <div className="flex justify-center flex-wrap gap-2">
+                      <button
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                          Anterior
+                      </button>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                          <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              className={`px-3 py-1 text-sm border rounded ${
+                                  currentPage === page ? "bg-primary text-white" : "hover:bg-gray-100"
+                              }`}
+                          >
+                              {page}
+                          </button>
+                      ))}
+                      <button
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                      >
+                          Siguiente
+                      </button>
+                  </div>
+                  <div className="text-xs text-muted-foreground text-center">
+                      Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredTickets.length)} de {filteredTickets.length} incidencias
+                  </div>
               </div>
             )}
           </div>

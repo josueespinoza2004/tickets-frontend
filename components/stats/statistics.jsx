@@ -20,7 +20,8 @@ export default function Statistics({ tickets }) {
 
     const bySucursal = {}
     tickets.forEach((t) => {
-      bySucursal[t.sucursal] = (bySucursal[t.sucursal] || 0) + 1
+      const branch = t.branch_name || "Sin Sucursal"
+      bySucursal[branch] = (bySucursal[branch] || 0) + 1
     })
 
     return { total, byStatus, byPriority, bySucursal }
