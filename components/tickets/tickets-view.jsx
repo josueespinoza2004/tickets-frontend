@@ -21,6 +21,10 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
   const [filteredTickets, setFilteredTickets] = useState(tickets)
   const [statusFilter, setStatusFilter] = useState("todos")
   const [priorityFilter, setPriorityFilter] = useState("todos")
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6
 
   useEffect(() => {
     let filtered = tickets
@@ -34,7 +38,18 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
     }
 
     setFilteredTickets(filtered)
+    setCurrentPage(1) // Reset to page 1 on filter change
   }, [tickets, statusFilter, priorityFilter])
+
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentTickets = filteredTickets.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredTickets.length / itemsPerPage)
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber)
+  }
 
   if (selectedTicket) {
     return (
@@ -86,30 +101,30 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
         </div>
 
         {/* Lista de tickets */}
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+        <div className="space-y-2">
           {filteredTickets.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               {tickets.length === 0 ? "No hay incidencias aún" : "No hay incidencias que coincidan con los filtros"}
             </div>
           ) : (
-            filteredTickets.map((ticket) => (
+            currentTickets.map((ticket) => (
               <div
                 key={ticket.id}
                 onClick={() => setSelectedTicket(ticket)}
-                className="p-4 border border-border rounded-lg hover:bg-secondary/50 cursor-pointer transition"
+                className="p-3 border border-border rounded-lg hover:bg-secondary/50 cursor-pointer transition"
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-1">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{ticket.title}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{ticket.description}</p>
+                    <h3 className="font-semibold text-sm text-foreground">{ticket.title}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{ticket.description}</p>
                   </div>
-                  <span className={`ml-4 px-3 py-1 rounded-full text-xs font-semibold ${statusColors[ticket.status]}`}>
+                  <span className={`ml-4 px-2 py-0.5 rounded-full text-[10px] font-semibold ${statusColors[ticket.status]}`}>
                     {ticket.status}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex gap-4">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex gap-3">
                     <span className={`font-semibold ${priorityColors[ticket.priority]}`}>{ticket.priority}</span>
                     <span className="text-muted-foreground">{ticket.branch_name}</span>
                     <span className="text-muted-foreground">
@@ -135,8 +150,37 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
         </div>
 
         {filteredTickets.length > 0 && (
-          <div className="text-xs text-muted-foreground text-center mt-4">
-            Mostrando {filteredTickets.length} de {tickets.length} incidencias
+          <div className="flex flex-col items-center gap-4 mt-6">
+              <div className="flex justify-center flex-wrap gap-2">
+                <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                    Anterior
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-1 text-sm border rounded ${
+                            currentPage === page ? "bg-primary text-white" : "hover:bg-gray-100"
+                        }`}
+                    >
+                        {page}
+                    </button>
+                ))}
+                <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                    Siguiente
+                </button>
+              </div>
+              <div className="text-xs text-muted-foreground text-center">
+                Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredTickets.length)} de {filteredTickets.length} incidencias
+              </div>
           </div>
         )}
       </div>

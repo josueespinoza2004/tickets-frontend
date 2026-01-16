@@ -21,6 +21,19 @@ export default function UsersManagement(props) {
   })
   const [submitted, setSubmitted] = useState(false)
   
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 7
+
+  const indexOfLastItem = currentPage * itemsPerPage
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage
+  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(users.length / itemsPerPage)
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber)
+  }
+  
   // Estados para sucursales
   const [sucursales, setSucursales] = useState([])
   const [loadingBranches, setLoadingBranches] = useState(true)
@@ -306,16 +319,16 @@ export default function UsersManagement(props) {
         </div>
 
         <div className="p-6">
-          <div className="space-y-3">
+          <div className="space-y-2">
             {users.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">No hay usuarios registrados</div>
             ) : (
-              users.map((user) => (
-                <div key={user.id} className="p-4 border border-border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              currentUsers.map((user) => (
+                <div key={user.id} className="px-3 py-2 border border-border rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-foreground">{user.name || user.full_name}</h3>
-                    <p className="text-sm text-muted-foreground">{user.email}</p>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <h3 className="font-semibold text-sm text-foreground">{user.name || user.full_name}</h3>
+                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <div className="text-[10px] text-gray-500 mt-1">
                         {user.branch_name ? `Sucursal: ${user.branch_name}` : ''}
                         {user.area_name ? ` • Área: ${user.area_name}` : ''} 
                         {user.cargo ? ` • ${user.cargo}` : ''}
@@ -323,7 +336,7 @@ export default function UsersManagement(props) {
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold mr-2 ${
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-semibold mr-2 ${
                         user.role === "admin" ? "bg-destructive/10 text-destructive" : "bg-accent/10 text-accent"
                       }`}
                     >
@@ -333,16 +346,16 @@ export default function UsersManagement(props) {
                     <Button 
                         size="sm" 
                         onClick={() => handleEdit(user)} 
-                        className="bg-blue-600 hover:bg-blue-700 text-white border-none shadow-sm"
+                        className="h-7 px-2 text-xs bg-blue-600 hover:bg-blue-700 text-white border-none shadow-sm"
                     >
-                        <Pencil className="h-3.5 w-3.5 mr-1" /> Editar
+                        <Pencil className="h-3 w-3 mr-1" /> Editar
                     </Button>
                     <Button 
                         size="sm" 
                         onClick={() => handleDelete(user.id)} 
-                        className="bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
+                        className="h-7 px-2 text-xs bg-red-600 hover:bg-red-700 text-white border-none shadow-sm"
                     >
-                        <Trash2 className="h-3.5 w-3.5 mr-1" /> Eliminar
+                        <Trash2 className="h-3 w-3 mr-1" /> Eliminar
                     </Button>
                   </div>
                 </div>
@@ -351,7 +364,38 @@ export default function UsersManagement(props) {
           </div>
 
           {users.length > 0 && (
-            <div className="text-xs text-muted-foreground text-center mt-4">Total: {users.length} usuarios</div>
+            <div className="flex flex-col items-center gap-4 mt-6">
+                <div className="flex justify-center flex-wrap gap-2">
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                        Anterior
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`px-3 py-1 text-sm border rounded ${
+                                currentPage === page ? "bg-primary text-white" : "hover:bg-gray-100"
+                            }`}
+                        >
+                            {page}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                        Siguiente
+                    </button>
+                </div>
+                <div className="text-xs text-muted-foreground text-center">
+                    Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, users.length)} de {users.length} usuarios
+                </div>
+            </div>
           )}
         </div>
       </div>
