@@ -67,33 +67,127 @@ export default function ReportsView({ tickets, isAdmin }) {
     applyFilters()
   }, [startDate, endDate, statusFilter, priorityFilter, sucursalFilter, tickets])
 
-  const handleExportPDF = () => {
-    let content = "REPORTE DE INCIDENCIAS - COOPEFACSA\n"
-    content += `Generado: ${new Date().toLocaleDateString("es-ES")}\n\n`
+  const handleExportExcel = async () => {
+    try {
+      const ExcelJS = (await import("exceljs")).default
+      const { saveAs } = (await import("file-saver"))
 
-    if (startDate || endDate) {
-      content += `Período: ${startDate || "Inicio"} a ${endDate || "Hoy"}\n\n`
+      const workbook = new ExcelJS.Workbook()
+      const worksheet = workbook.addWorksheet("Reporte de Incidencias")
+
+      // Title and Logo Header
+      
+      // Title and Logo Header
+      
+      // Title and Logo Header using a single merged block as requested
+      
+      // Merge A1:G4 (4 rows high)
+      worksheet.mergeCells("A1:G4")
+      const headerCell = worksheet.getCell("A1")
+      headerCell.value = "REPORTE DE INCIDENCIAS - COOPEFACSA R.L."
+      headerCell.font = { name: "Arial", size: 20, bold: true }
+      // Align center implies the text is in the middle
+      // To prevent text overlapping the logo (if logo is left), we might want 'center' or 'right'?, 
+      // but user said "centradas". So we keep it centered.
+      headerCell.alignment = { vertical: "middle", horizontal: "center" }
+
+      try {
+        const response = await fetch("/coopefacsa.png")
+        const buffer = await response.arrayBuffer()
+        const logoId = workbook.addImage({
+          buffer: buffer,
+          extension: "png",
+        })
+
+        // Place Logo inside the merged block, closer to text and better aspect ratio
+        worksheet.addImage(logoId, {
+          tl: { col: 1.1, row: 0.4 }, 
+          ext: { width: 100, height: 60 },
+        })
+      } catch (error) {
+        console.error("Error loading logo:", error)
+      }
+
+      // User explicitly requested to REMOVE the "Generado" / Date rows.
+      // And also requested to remove empty spacer rows.
+      // So we go straight to table headers.
+
+      // Table Headers (No ID)
+      const headers = [
+        "Nombre de tarea",
+        "Estado",
+        "Responsable",
+        "Fecha",
+        "Tipo",
+        "Sucursal",
+        "Descripción",
+      ]
+      
+      const headerRow = worksheet.addRow(headers)
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" } }
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FF2563EB" }, // Primary Blue
+        }
+        cell.alignment = { vertical: "middle", horizontal: "center" }
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        }
+      })
+
+      // Data Rows
+      filteredTickets.forEach((ticket) => {
+        const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt
+        const safeDate = (typeof dateVal === 'string' && dateVal.length === 10) 
+                         ? dateVal + 'T00:00:00' 
+                         : dateVal
+        const displayDate = dateVal ? new Date(safeDate).toLocaleDateString("es-ES") : "—"
+
+        const row = worksheet.addRow([
+          ticket.title,
+          ticket.status,
+          ticket.assigned_to_name || "—",
+          displayDate,
+          ticket.priority,
+          ticket.branch_name,
+          ticket.description,
+        ])
+
+        // Style data cells
+        row.eachCell((cell) => {
+          cell.border = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          }
+          cell.alignment = { vertical: "middle", wrapText: true }
+        })
+      })
+
+      // Adjust column widths
+      worksheet.getColumn(1).width = 35  // Nombre
+      worksheet.getColumn(2).width = 15  // Estado
+      worksheet.getColumn(3).width = 25  // Responsable
+      worksheet.getColumn(4).width = 15  // Fecha
+      worksheet.getColumn(5).width = 15  // Tipo
+      worksheet.getColumn(6).width = 20  // Sucursal
+      worksheet.getColumn(7).width = 70  // Descripción (widened as requested)
+
+      // Generate Buffer and Save
+      const buffer = await workbook.xlsx.writeBuffer()
+      const fileName = `reporte_incidencias_${new Date().toISOString().split("T")[0]}.xlsx`
+      saveAs(new Blob([buffer], { type: "application/octet-stream" }), fileName)
+
+    } catch (error) {
+      console.error("Error generating Excel:", error)
+      alert("Hubo un error al generar el reporte en Excel.")
     }
-
-    content += "DETALLE DE INCIDENCIAS:\n"
-    content += "─".repeat(120) + "\n"
-
-    filteredTickets.forEach((ticket) => {
-      content += `ID: ${ticket.id} | Nombre: ${ticket.name}\n`
-      content += `Estado: ${ticket.status} | Tipo: ${ticket.priority} | Sucursal: ${ticket.sucursal}\n`
-      content += `Responsable: ${ticket.responsible || "No asignado"}\n`
-      content += `Fecha: ${new Date(ticket.createdAt).toLocaleDateString("es-ES")}\n`
-      content += `Descripción: ${ticket.description}\n`
-      content += "─".repeat(120) + "\n"
-    })
-
-    const element = document.createElement("a")
-    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(content))
-    element.setAttribute("download", `reporte_incidencias_${new Date().toISOString().split("T")[0]}.txt`)
-    element.style.display = "none"
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
   }
 
   return (
@@ -175,10 +269,10 @@ export default function ReportsView({ tickets, isAdmin }) {
 
           <div className="mt-4">
             <Button
-              onClick={handleExportPDF}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+              onClick={handleExportExcel}
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold"
             >
-              📥 Descargar Reporte
+              📊 Descargar Excel
             </Button>
           </div>
         </div>
