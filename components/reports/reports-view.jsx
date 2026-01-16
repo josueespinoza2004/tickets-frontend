@@ -148,21 +148,23 @@ export default function ReportsView({ tickets, isAdmin }) {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Sucursal</label>
-              <select
-                value={sucursalFilter}
-                onChange={(e) => setSucursalFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-input rounded-md bg-input"
-              >
-                <option value="todos">Todas</option>
-                {sucursales.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {isAdmin && (
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Sucursal</label>
+                <select
+                  value={sucursalFilter}
+                  onChange={(e) => setSucursalFilter(e.target.value)}
+                  className="w-full px-3 py-2 border border-input rounded-md bg-input"
+                >
+                  <option value="todos">Todas</option>
+                  {sucursales.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="mt-4">
