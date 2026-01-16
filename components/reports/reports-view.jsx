@@ -22,13 +22,19 @@ export default function ReportsView({ tickets, isAdmin }) {
     let filtered = tickets
 
     if (startDate) {
-      filtered = filtered.filter((t) => new Date(t.createdAt) >= new Date(startDate))
+      filtered = filtered.filter((t) => {
+        const dateVal = t.incident_date || t.created_at || t.createdAt
+        if (!dateVal) return false
+        return dateVal.substring(0, 10) >= startDate
+      })
     }
 
     if (endDate) {
-      const endDateTime = new Date(endDate)
-      endDateTime.setHours(23, 59, 59)
-      filtered = filtered.filter((t) => new Date(t.createdAt) <= endDateTime)
+      filtered = filtered.filter((t) => {
+        const dateVal = t.incident_date || t.created_at || t.createdAt
+        if (!dateVal) return false
+        return dateVal.substring(0, 10) <= endDate
+      })
     }
 
     if (statusFilter !== "todos") {
