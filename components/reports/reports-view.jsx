@@ -171,13 +171,13 @@ export default function ReportsView({ tickets, isAdmin }) {
       })
 
       // Adjust column widths
-      worksheet.getColumn(1).width = 35  // Nombre
+      worksheet.getColumn(1).width = 50  // Nombre de tarea (Increased)
       worksheet.getColumn(2).width = 15  // Estado
-      worksheet.getColumn(3).width = 25  // Responsable
+      worksheet.getColumn(3).width = 35  // Responsable (Increased for single line)
       worksheet.getColumn(4).width = 15  // Fecha
       worksheet.getColumn(5).width = 15  // Tipo
       worksheet.getColumn(6).width = 20  // Sucursal
-      worksheet.getColumn(7).width = 70  // Descripción (widened as requested)
+      worksheet.getColumn(7).width = 100 // Descripción (Increased significantly)
 
       // Generate Buffer and Save
       const buffer = await workbook.xlsx.writeBuffer()
