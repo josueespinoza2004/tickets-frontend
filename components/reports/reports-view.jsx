@@ -159,7 +159,7 @@ export default function ReportsView({ tickets, isAdmin }) {
         ])
 
         // Style data cells
-        row.eachCell((cell) => {
+        row.eachCell((cell, colNumber) => {
           cell.border = {
             top: { style: "thin" },
             left: { style: "thin" },
@@ -167,6 +167,48 @@ export default function ReportsView({ tickets, isAdmin }) {
             right: { style: "thin" },
           }
           cell.alignment = { vertical: "middle", wrapText: true }
+
+          // Estado Column (Column 2)
+          if (colNumber === 2) {
+            let argbFill = "FFFFFFFF" // White default
+            let argbFont = "FF000000" // Black default
+            
+            if (ticket.status === "Listo") {
+              argbFill = "FFDCFCE7" // Green 100
+              argbFont = "FF166534" // Green 800
+            } else if (ticket.status === "En curso") {
+              argbFill = "FFDBEAFE" // Blue 100
+              argbFont = "FF1E40AF" // Blue 800
+            } else {
+              // Sin Empezar or others
+              argbFill = "FFF3F4F6" // Gray 100
+              argbFont = "FF1F2937" // Gray 800
+            }
+            
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: argbFill } }
+            cell.font = { color: { argb: argbFont }, bold: true }
+          }
+          
+          // Tipo/Priority Column (Column 5)
+          else if (colNumber === 5) {
+            let argbFill = "FFFFFFFF"
+            let argbFont = "FF000000"
+            
+            if (ticket.priority === "Alta") {
+              argbFill = "FFFEE2E2" // Red 100
+              argbFont = "FF991B1B" // Red 800
+            } else if (ticket.priority === "Media") {
+              argbFill = "FFFEF9C3" // Yellow 100
+              argbFont = "FF854D0E" // Yellow 800
+            } else {
+               // Baja
+              argbFill = "FFDCFCE7" // Green 100
+              argbFont = "FF166534" // Green 800
+            }
+
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: argbFill } }
+            cell.font = { color: { argb: argbFont }, bold: true }
+          }
         })
       })
 
