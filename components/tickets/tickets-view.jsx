@@ -27,7 +27,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
   const itemsPerPage = 6
 
   useEffect(() => {
-    let filtered = tickets
+    let filtered = [...tickets] // Create a copy to avoid mutating props if strictly referencing
 
     if (statusFilter !== "todos") {
       filtered = filtered.filter((t) => t.status === statusFilter)
@@ -36,6 +36,13 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
     if (priorityFilter !== "todos") {
       filtered = filtered.filter((t) => t.priority === priorityFilter)
     }
+
+    // Sort by incident_date desc (Newest first)
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.incident_date || a.created_at || a.createdAt)
+      const dateB = new Date(b.incident_date || b.created_at || b.createdAt)
+      return dateB - dateA
+    })
 
     setFilteredTickets(filtered)
     setCurrentPage(1) // Reset to page 1 on filter change

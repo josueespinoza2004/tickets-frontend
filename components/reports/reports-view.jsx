@@ -19,7 +19,7 @@ export default function ReportsView({ tickets, isAdmin }) {
   const sucursales = ["Nueva Guinea", "San Carlos", "Muelle de los Bueyes", "El Rama"]
 
   const applyFilters = () => {
-    let filtered = tickets
+    let filtered = [...tickets] // Create a copy
 
     if (startDate) {
       filtered = filtered.filter((t) => {
@@ -48,6 +48,13 @@ export default function ReportsView({ tickets, isAdmin }) {
     if (sucursalFilter !== "todos") {
       filtered = filtered.filter((t) => t.sucursal === sucursalFilter)
     }
+
+    // Sort by incident_date desc (Newest first)
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.incident_date || a.created_at || a.createdAt)
+      const dateB = new Date(b.incident_date || b.created_at || b.createdAt)
+      return dateB - dateA // Descending
+    })
 
     setFilteredTickets(filtered)
     setCurrentPage(1) // Reset to page 1 on filter change
