@@ -146,9 +146,17 @@ export default function ReportsView({ tickets, isAdmin }) {
           right: { style: "thin" },
         }
       })
+      
+      // Sort for Export: Ascending (Oldest first) as requested "13, 14, 15..."
+      // The UI remains Descending (Newest first), but Excel needs to be historical order.
+      const ticketsToExport = [...filteredTickets].sort((a, b) => {
+        const dateA = new Date(a.incident_date || a.created_at || a.createdAt)
+        const dateB = new Date(b.incident_date || b.created_at || b.createdAt)
+        return dateA - dateB // Ascending
+      })
 
       // Data Rows
-      filteredTickets.forEach((ticket) => {
+      ticketsToExport.forEach((ticket) => {
         const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt
         const safeDate = (typeof dateVal === 'string' && dateVal.length === 10) 
                          ? dateVal + 'T00:00:00' 
