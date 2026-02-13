@@ -364,36 +364,31 @@ export default function UsersManagement(props) {
           </div>
 
           {users.length > 0 && (
-            <div className="flex flex-col items-center gap-4 mt-6">
-                <div className="flex justify-center flex-wrap gap-2">
+            <div className="flex flex-col items-center gap-3 mt-6">
+                <div className="flex justify-center items-center gap-3">
                     <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className={`p-2 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary transition-colors`}
+                        title="Página anterior"
                     >
-                        Anterior
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
                     </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                            key={page}
-                            onClick={() => handlePageChange(page)}
-                            className={`px-3 py-1 text-sm border rounded ${
-                                currentPage === page ? "bg-primary text-white" : "hover:bg-gray-100"
-                            }`}
-                        >
-                            {page}
-                        </button>
-                    ))}
                     <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className={`px-3 py-1 text-sm border rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className={`p-2 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary transition-colors`}
+                        title="Página siguiente"
                     >
-                        Siguiente
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
                     </button>
                 </div>
-                <div className="text-xs text-muted-foreground text-center">
-                    Mostrando {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, users.length)} de {users.length} usuarios
+                <div className="text-sm text-muted-foreground text-center">
+                    Página {currentPage} de {totalPages}
                 </div>
             </div>
           )}
