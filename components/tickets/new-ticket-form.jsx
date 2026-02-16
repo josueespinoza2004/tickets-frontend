@@ -18,7 +18,7 @@ export default function NewTicketForm({ onSubmit, isAdmin, user }) {
     name: "",
     description: "",
     priority: "Baja",
-    status: "Listo", // Requested default
+    status: "Sin Empezar", // Default para usuarios
     assigned_to: [], // Array of user IDs
     branch_id: user?.branch_id || "", 
     area_id: "", 
@@ -107,7 +107,7 @@ export default function NewTicketForm({ onSubmit, isAdmin, user }) {
         name: "",
         description: "",
         priority: "Baja",
-        status: "Listo", // Reset to default
+        status: "Sin Empezar", // Reset to default
         assigned_to: [],
         incident_date: new Date().toISOString().split('T')[0],
         evidence_file: null
@@ -176,21 +176,23 @@ export default function NewTicketForm({ onSubmit, isAdmin, user }) {
             />
           </div>
 
-          {/* Row 2: Status and Date */}
+          {/* Row 2: Status (solo admin) and Date */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Estado</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="Sin Empezar">Sin Empezar</option>
-                  <option value="En curso">En curso</option>
-                  <option value="Listo">Listo</option>
-                </select>
-              </div>
+              {isAdmin && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Estado</label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="Sin Empezar">Sin Empezar</option>
+                    <option value="En curso">En curso</option>
+                    <option value="Listo">Listo</option>
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Fecha de la Incidencia</label>
@@ -204,27 +206,29 @@ export default function NewTicketForm({ onSubmit, isAdmin, user }) {
               </div>
           </div>
           
-          {/* Row 3: Branch and Evidence */}
+          {/* Row 3: Branch (solo admin) and Evidence */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1">Sucursal</label>
-                <select
-                  name="branch_id"
-                  value={formData.branch_id}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  {loading ? (
-                    <option>Cargando...</option>
-                  ) : (
-                    sucursales.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
+              {isAdmin && (
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Sucursal</label>
+                  <select
+                    name="branch_id"
+                    value={formData.branch_id}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {loading ? (
+                      <option>Cargando...</option>
+                    ) : (
+                      sucursales.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Evidencia (Foto/Archivo)</label>
