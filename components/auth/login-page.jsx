@@ -2,11 +2,17 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import ForgotPassword from "@/components/auth/forgot-password"
 
 export default function LoginPage({ onLoginSuccess }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+
+  if (showForgotPassword) {
+    return <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+  }
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -78,9 +84,13 @@ export default function LoginPage({ onLoginSuccess }) {
                 <label className="block text-xs sm:text-sm font-medium text-gray-700">
                   Contraseña
                 </label>
-                <a href="#" className="text-xs text-blue-600 hover:text-blue-800">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs text-blue-600 hover:text-blue-800"
+                >
                   ¿Olvidaste tu contraseña?
-                </a>
+                </button>
               </div>
               <input
                 type="password"
