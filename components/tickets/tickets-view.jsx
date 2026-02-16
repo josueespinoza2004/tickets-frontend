@@ -131,9 +131,12 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 flex-wrap">
                     <span className={`font-semibold ${priorityColors[ticket.priority]}`}>{ticket.priority}</span>
                     <span className="text-muted-foreground">{ticket.branch_name}</span>
+                    {isAdmin && ticket.creator_name && (
+                      <span className="text-muted-foreground">👤 {ticket.creator_name}</span>
+                    )}
                     <span className="text-muted-foreground">
                       {(() => {
                         const dateVal = ticket.incident_date || ticket.created_at || ticket.createdAt;
