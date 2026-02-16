@@ -67,11 +67,11 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
       </div>
 
       <div className="p-6">
-        <div className="grid grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Información básica */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Información Básica</h3>
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
               <div>
                 <p className="text-sm text-muted-foreground">Nombre</p>
                 {isEditing && isAdmin ? (
@@ -144,6 +144,26 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
                     <p className={`font-medium ${priorityColors[ticket.priority]}`}>{ticket.priority}</p>
                 )}
               </div>
+              
+              {/* Información del creador */}
+              {ticket.creator_name && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Reportado por</p>
+                  <p className="font-medium">{ticket.creator_name}</p>
+                </div>
+              )}
+              {ticket.creator_cargo && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Cargo</p>
+                  <p className="font-medium">{ticket.creator_cargo}</p>
+                </div>
+              )}
+              {ticket.creator_area_name && (
+                <div className="col-span-2">
+                  <p className="text-sm text-muted-foreground">Área</p>
+                  <p className="font-medium">{ticket.creator_area_name}</p>
+                </div>
+              )}
             </div>
           </div>
 
