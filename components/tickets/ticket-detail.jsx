@@ -250,11 +250,46 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
             <div className="mb-6">
                 <h3 className="font-semibold text-foreground mb-2">Evidencia Adjunta</h3>
                 <div className="relative aspect-video max-w-md bg-gray-100 rounded-lg overflow-hidden border border-border">
-                    <img 
-                        src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/${ticket.evidence_file}`} 
-                        alt="Evidencia" 
-                        className="object-contain w-full h-full"
-                    />
+                    {(() => {
+                        const fileUrl = `${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/${ticket.evidence_file}`;
+                        const fileExtension = ticket.evidence_file.split('.').pop().toLowerCase();
+                        const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi'];
+                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                        
+                        if (videoExtensions.includes(fileExtension)) {
+                            return (
+                                <video 
+                                    controls 
+                                    className="w-full h-full object-contain"
+                                    preload="metadata"
+                                >
+                                    <source src={fileUrl} type={`video/${fileExtension === 'mov' ? 'quicktime' : fileExtension}`} />
+                                    Tu navegador no soporta la reproducción de videos.
+                                </video>
+                            );
+                        } else if (imageExtensions.includes(fileExtension)) {
+                            return (
+                                <img 
+                                    src={fileUrl} 
+                                    alt="Evidencia" 
+                                    className="object-contain w-full h-full"
+                                />
+                            );
+                        } else {
+                            return (
+                                <div className="flex items-center justify-center h-full">
+                                    <a 
+                                        href={fileUrl} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-primary hover:underline"
+                                    >
+                                        📎 Descargar archivo ({fileExtension.toUpperCase()})
+                                    </a>
+                                </div>
+                            );
+                        }
+                    })()}
                 </div>
             </div>
         )}
