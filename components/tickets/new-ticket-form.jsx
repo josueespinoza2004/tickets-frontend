@@ -132,37 +132,36 @@ export default function NewTicketForm({ onSubmit, isAdmin, user }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           
-          {/* Row 1: Name and Priority (if Admin) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-1">Nombre de la Incidencia *</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Ej: Problema con la impresora"
-                className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
-                required
-              />
-            </div>
-
-            {isAdmin && (
-              <div>
-                 <label className="block text-sm font-medium text-foreground mb-1">Prioridad</label>
-                 <select
-                   name="priority"
-                   value={formData.priority}
-                   onChange={handleChange}
-                   className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
-                 >
-                   <option value="Baja">Baja</option>
-                   <option value="Media">Media</option>
-                   <option value="Alta">Alta</option>
-                 </select>
-              </div>
-            )}
+          {/* Row 1: Name (full width) */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-1">Nombre de la Incidencia *</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Ej: Problema con la impresora"
+              className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+              required
+            />
           </div>
+
+          {/* Priority (solo admin) */}
+          {isAdmin && (
+            <div>
+               <label className="block text-sm font-medium text-foreground mb-1">Prioridad</label>
+               <select
+                 name="priority"
+                 value={formData.priority}
+                 onChange={handleChange}
+                 className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+               >
+                 <option value="Baja">Baja</option>
+                 <option value="Media">Media</option>
+                 <option value="Alta">Alta</option>
+               </select>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">Descripción (Opcional)</label>
