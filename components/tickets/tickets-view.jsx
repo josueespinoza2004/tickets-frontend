@@ -152,7 +152,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
                       })()}
                     </span>
                   </div>
-                  <span className="text-primary font-medium">#{ticket.id}</span>
+                  {isAdmin && <span className="text-primary font-medium">#{ticket.id}</span>}
                 </div>
               </div>
             ))
