@@ -81,7 +81,7 @@ export default function ForgotPassword({ onBack }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-blue-600 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6 text-foreground">
           Recuperar Contraseña
