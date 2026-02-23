@@ -298,12 +298,32 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
         {isAdmin && (
           <div className="flex gap-3 pt-4 border-t border-border">
             {!isEditing ? (
-              <Button
-                onClick={handleEditClick}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-              >
-                Editar Incidencia
-              </Button>
+              <>
+                <Button
+                  onClick={handleEditClick}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  Editar Incidencia
+                </Button>
+                <Button
+                  onClick={async () => {
+                    if (confirm('¿Estás seguro de que deseas eliminar esta incidencia? Esta acción no se puede deshacer.')) {
+                      try {
+                        await fetchApi(`/api/tickets.php?id=${ticket.id}`, {
+                          method: 'DELETE'
+                        })
+                        alert('Incidencia eliminada exitosamente')
+                        onBack()
+                      } catch (error) {
+                        alert('Error al eliminar la incidencia: ' + error.message)
+                      }
+                    }
+                  }}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Eliminar Incidencia
+                </Button>
+              </>
             ) : (
               <>
                 <Button onClick={handleSave} className="bg-accent hover:bg-accent/90 text-accent-foreground">
