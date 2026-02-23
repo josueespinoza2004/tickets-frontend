@@ -3,7 +3,7 @@
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
-export default function Sidebar({ user, currentSection, onSectionChange, onLogout, isAdmin, onClose }) {
+export default function Sidebar({ user, currentSection, onSectionChange, onLogout, isAdmin, isGerente, onClose }) {
   const userMenuItems = [
     { id: "tickets", label: "Mis Incidencias", icon: "🎫" },
     { id: "reportes", label: "Reportes", icon: "📊" },
@@ -18,7 +18,14 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
     { id: "estadisticas", label: "Estadísticas", icon: "📈" },
   ]
 
-  const menuItems = isAdmin ? adminMenuItems : userMenuItems
+  const gerenteMenuItems = [
+    { id: "tickets", label: "Todas las Incidencias", icon: "🎫" },
+    { id: "nueva-incidencia", label: "Nueva Incidencia", icon: "➕" },
+    { id: "reportes", label: "Reportes Avanzados", icon: "📊" },
+    { id: "estadisticas", label: "Estadísticas", icon: "📈" },
+  ]
+
+  const menuItems = isAdmin ? adminMenuItems : isGerente ? gerenteMenuItems : userMenuItems
 
   return (
     <div className="w-64 bg-primary text-primary-foreground shadow-md flex flex-col h-full">
@@ -74,7 +81,7 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
           <p className="text-xs opacity-70">Conectado como</p>
           <p className="font-semibold text-xs sm:text-sm truncate">{user?.full_name}</p>
           <p className="text-xs opacity-70 mt-1">
-            {isAdmin ? "Administrador" : "Usuario"}
+            {isAdmin ? "Administrador" : isGerente ? "Gerente" : "Usuario"}
           </p>
         </div>
         

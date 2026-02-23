@@ -18,7 +18,7 @@ const priorityColors = {
   Baja: "text-green-600",
 }
 
-export default function TicketDetail({ ticket, onBack, onUpdate, onDelete, isAdmin }) {
+export default function TicketDetail({ ticket, onBack, onUpdate, onDelete, isAdmin, isGerente }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedTicket, setEditedTicket] = useState(ticket)
   const [admins, setAdmins] = useState([])

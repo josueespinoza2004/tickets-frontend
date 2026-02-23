@@ -16,7 +16,7 @@ const priorityColors = {
   Baja: "text-green-600",
 }
 
-export default function TicketsView({ tickets, isAdmin, onUpdateTicket, onDeleteTicket }) {
+export default function TicketsView({ tickets, isAdmin, isGerente, onUpdateTicket, onDeleteTicket }) {
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [filteredTickets, setFilteredTickets] = useState(tickets)
   const [statusFilter, setStatusFilter] = useState("todos")
@@ -66,6 +66,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket, onDelete
         onUpdate={onUpdateTicket}
         onDelete={onDeleteTicket}
         isAdmin={isAdmin}
+        isGerente={isGerente}
       />
     )
   }
@@ -73,7 +74,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket, onDelete
   return (
     <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
       <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
-        <h3 className="text-lg sm:text-2xl font-semibold px-6 py-4">{isAdmin ? "Todas las Incidencias" : "Mis Incidencias"}</h3>
+        <h3 className="text-lg sm:text-2xl font-semibold px-6 py-4">{isAdmin || isGerente ? "Todas las Incidencias" : "Mis Incidencias"}</h3>
       </div>
 
       <div className="p-6">
@@ -135,7 +136,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket, onDelete
                   <div className="flex gap-3 flex-wrap">
                     <span className={`font-semibold ${priorityColors[ticket.priority]}`}>{ticket.priority}</span>
                     <span className="text-muted-foreground">{ticket.branch_name}</span>
-                    {isAdmin && ticket.creator_name && (
+                    {(isAdmin || isGerente) && ticket.creator_name && (
                       <span className="text-muted-foreground">👤 {ticket.creator_name}</span>
                     )}
                     <span className="text-muted-foreground">

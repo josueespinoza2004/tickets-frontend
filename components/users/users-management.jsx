@@ -263,6 +263,7 @@ export default function UsersManagement(props) {
                     className="w-full px-3 py-2 border border-input rounded-md bg-input"
                   >
                     <option value="user">Usuario</option>
+                    <option value="gerente">Gerente</option>
                     <option value="admin">Administrador</option>
                   </select>
                 </div>
@@ -355,10 +356,10 @@ export default function UsersManagement(props) {
                   <div className="flex items-center gap-2">
                     <span
                       className={`px-2 py-0.5 rounded-full text-[10px] font-semibold mr-2 ${
-                        user.role === "admin" ? "bg-destructive/10 text-destructive" : "bg-accent/10 text-accent"
+                        user.role === "admin" ? "bg-destructive/10 text-destructive" : user.role === "gerente" ? "bg-blue-100 text-blue-800" : "bg-accent/10 text-accent"
                       }`}
                     >
-                      {user.role === "admin" ? "Admin" : "User"}
+                      {user.role === "admin" ? "Admin" : user.role === "gerente" ? "Gerente" : "User"}
                     </span>
                     
                     <Button 

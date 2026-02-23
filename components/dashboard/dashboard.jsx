@@ -4,8 +4,9 @@ import { useState } from "react"
 import Sidebar from "@/components/dashboard/sidebar"
 import UserDashboard from "@/components/dashboard/user-dashboard"
 import AdminDashboard from "@/components/dashboard/admin-dashboard"
+import ManagerDashboard from "@/components/dashboard/manager-dashboard"
 import { Button } from "@/components/ui/button"
-import { Menu, X } from "lucide-react"
+import { Menu } from "lucide-react"
 
 export default function Dashboard({ user, onLogout }) {
   // Recuperar la sección guardada o usar "tickets" por defecto
@@ -18,6 +19,7 @@ export default function Dashboard({ user, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const isAdmin = user?.role === "admin"
+  const isGerente = user?.role === "gerente"
 
   // Guardar la sección actual cuando cambie
   const handleSectionChange = (section) => {
@@ -49,6 +51,7 @@ export default function Dashboard({ user, onLogout }) {
           onSectionChange={handleSectionChange}
           onLogout={onLogout}
           isAdmin={isAdmin}
+          isGerente={isGerente}
           onClose={() => setSidebarOpen(false)}
         />
       </div>
@@ -69,7 +72,7 @@ export default function Dashboard({ user, onLogout }) {
             </Button>
             <div>
               <h2 className="text-lg sm:text-2xl font-bold text-primary">
-                {isAdmin ? "Panel de Administrador" : "Panel de Usuario"}
+                {isAdmin ? "Panel de Administrador" : isGerente ? "Panel de Gerente" : "Panel de Usuario"}
               </h2>
             </div>
           </div>
@@ -101,6 +104,8 @@ export default function Dashboard({ user, onLogout }) {
         <div className="flex-1 overflow-auto p-3 sm:p-4 lg:p-6">
           {isAdmin ? (
             <AdminDashboard currentSection={currentSection} />
+          ) : isGerente ? (
+            <ManagerDashboard currentSection={currentSection} />
           ) : (
             <UserDashboard currentSection={currentSection} />
           )}
