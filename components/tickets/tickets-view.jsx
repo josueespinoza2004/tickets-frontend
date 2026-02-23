@@ -16,7 +16,7 @@ const priorityColors = {
   Baja: "text-green-600",
 }
 
-export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
+export default function TicketsView({ tickets, isAdmin, onUpdateTicket, onDeleteTicket }) {
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [filteredTickets, setFilteredTickets] = useState(tickets)
   const [statusFilter, setStatusFilter] = useState("todos")
@@ -64,6 +64,7 @@ export default function TicketsView({ tickets, isAdmin, onUpdateTicket }) {
         ticket={selectedTicket}
         onBack={() => setSelectedTicket(null)}
         onUpdate={onUpdateTicket}
+        onDelete={onDeleteTicket}
         isAdmin={isAdmin}
       />
     )

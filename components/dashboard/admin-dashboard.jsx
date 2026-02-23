@@ -53,11 +53,26 @@ export default function AdminDashboard({ currentSection }) {
         const { ticketsAPI } = await import("@/lib/api")
         await ticketsAPI.update(updatedTicket.id, updatedTicket)
         
-        // Update local state optimistic or refetch
-        setTickets(prev => prev.map(t => t.id === updatedTicket.id ? updatedTicket : t))
+        // Recargar desde el servidor para tener datos actualizados
+        const data = await ticketsAPI.getAll()
+        setTickets(data)
     } catch (error) {
         console.error("Error updating ticket:", error)
         alert("Error al actualizar ticket")
+    }
+  }
+
+  const handleDeleteTicket = async (ticketId) => {
+    try {
+        const { ticketsAPI } = await import("@/lib/api")
+        await ticketsAPI.delete(ticketId)
+        
+        // Recargar tickets después de eliminar
+        const data = await ticketsAPI.getAll()
+        setTickets(data)
+    } catch (error) {
+        console.error("Error deleting ticket:", error)
+        alert("Error al eliminar ticket")
     }
   }
 
@@ -102,7 +117,12 @@ export default function AdminDashboard({ currentSection }) {
   return (
     <div className="space-y-6">
       {currentSection === "tickets" && (
-        <TicketsView tickets={tickets} isAdmin={true} onUpdateTicket={handleUpdateTicket} />
+        <TicketsView 
+          tickets={tickets} 
+          isAdmin={true} 
+          onUpdateTicket={handleUpdateTicket}
+          onDeleteTicket={handleDeleteTicket}
+        />
       )}
 
       {currentSection === "nueva-incidencia" && <NewTicketForm onSubmit={handleNewTicket} isAdmin={true} />}

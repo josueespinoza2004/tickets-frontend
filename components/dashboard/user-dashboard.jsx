@@ -48,6 +48,20 @@ export default function UserDashboard({ currentSection }) {
     }
   }
 
+  const handleUpdateTicket = async (updatedTicket) => {
+    try {
+        const { ticketsAPI } = await import("@/lib/api")
+        await ticketsAPI.update(updatedTicket.id, updatedTicket)
+        
+        // Recargar desde el servidor
+        const data = await ticketsAPI.getAll()
+        setTickets(data)
+    } catch (error) {
+        console.error("Error updating ticket:", error)
+        alert("Error al actualizar ticket")
+    }
+  }
+
   if (!user) return <div className="text-center py-8">Cargando...</div>
 
   return (
@@ -55,7 +69,11 @@ export default function UserDashboard({ currentSection }) {
       {currentSection === "tickets" && (
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
           <div className="xl:col-span-2 order-2 xl:order-1">
-            <TicketsView tickets={tickets} isAdmin={false} />
+            <TicketsView 
+              tickets={tickets} 
+              isAdmin={false} 
+              onUpdateTicket={handleUpdateTicket}
+            />
           </div>
           <div className="order-1 xl:order-2">
             <NewTicketForm onSubmit={handleNewTicket} user={user} isAdmin={false} />

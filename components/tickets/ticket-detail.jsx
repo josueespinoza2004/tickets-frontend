@@ -17,7 +17,7 @@ const priorityColors = {
   Baja: "text-green-600",
 }
 
-export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
+export default function TicketDetail({ ticket, onBack, onUpdate, onDelete, isAdmin }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedTicket, setEditedTicket] = useState(ticket)
   const [admins, setAdmins] = useState([])
@@ -308,14 +308,9 @@ export default function TicketDetail({ ticket, onBack, onUpdate, isAdmin }) {
                 <Button
                   onClick={async () => {
                     if (confirm('¿Estás seguro de que deseas eliminar esta incidencia? Esta acción no se puede deshacer.')) {
-                      try {
-                        await fetchApi(`/api/tickets.php?id=${ticket.id}`, {
-                          method: 'DELETE'
-                        })
-                        alert('Incidencia eliminada exitosamente')
+                      if (onDelete) {
+                        await onDelete(ticket.id)
                         onBack()
-                      } catch (error) {
-                        alert('Error al eliminar la incidencia: ' + error.message)
                       }
                     }
                   }}
