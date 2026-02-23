@@ -5,6 +5,7 @@ import TicketsView from "@/components/tickets/tickets-view"
 import NewTicketForm from "@/components/tickets/new-ticket-form"
 import ReportsView from "@/components/reports/reports-view"
 import UserProfile from "@/components/profile/user-profile"
+import Swal from 'sweetalert2'
 
 export default function UserDashboard({ currentSection }) {
   const [tickets, setTickets] = useState([])
@@ -42,9 +43,22 @@ export default function UserDashboard({ currentSection }) {
         // Reload list
         const data = await ticketsAPI.getAll()
         setTickets(data)
+        
+        await Swal.fire({
+          title: 'Éxito',
+          text: 'Incidencia creada correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error creating ticket:", error)
-        alert("Error al crear ticket")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo crear la incidencia',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -56,9 +70,22 @@ export default function UserDashboard({ currentSection }) {
         // Recargar desde el servidor
         const data = await ticketsAPI.getAll()
         setTickets(data)
+        
+        await Swal.fire({
+          title: 'Actualizado',
+          text: 'Incidencia actualizada correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error updating ticket:", error)
-        alert("Error al actualizar ticket")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar la incidencia',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 

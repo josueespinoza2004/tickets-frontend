@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { fetchApi } from "@/lib/api"
+import Swal from 'sweetalert2'
 
 const statusColors = {
   "Sin Empezar": "bg-gray-100 text-gray-800",
@@ -307,9 +308,27 @@ export default function TicketDetail({ ticket, onBack, onUpdate, onDelete, isAdm
                 </Button>
                 <Button
                   onClick={async () => {
-                    if (confirm('¿Estás seguro de que deseas eliminar esta incidencia? Esta acción no se puede deshacer.')) {
+                    const result = await Swal.fire({
+                      title: '¿Estás seguro?',
+                      text: "Esta acción no se puede deshacer",
+                      icon: 'warning',
+                      showCancelButton: true,
+                      confirmButtonColor: '#dc2626',
+                      cancelButtonColor: '#6b7280',
+                      confirmButtonText: 'Sí, eliminar',
+                      cancelButtonText: 'Cancelar'
+                    })
+                    
+                    if (result.isConfirmed) {
                       if (onDelete) {
                         await onDelete(ticket.id)
+                        await Swal.fire({
+                          title: 'Eliminado',
+                          text: 'La incidencia ha sido eliminada',
+                          icon: 'success',
+                          timer: 1500,
+                          showConfirmButton: false
+                        })
                         onBack()
                       }
                     }

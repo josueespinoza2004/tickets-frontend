@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Pencil, Trash2, X, Check } from "lucide-react"
+import Swal from 'sweetalert2'
 
 const roles = ["admin", "user"]
 
@@ -110,12 +111,29 @@ export default function UsersManagement(props) {
     loadBranches()
   }
 
-  const handleDelete = (id) => {
-    if (confirm("¿Estás seguro de eliminar este usuario?")) {
-        // Asumimos que onAddUser maneja creación, necesitamos onDeleteUser y onUpdateUser props
-        // Pero como UsersManagement recibe "onAddUser", quizás debamos pedir más props o usar una prop genérica.
-        // Por compatibilidad con AdminDashboard, usaremos props nuevas que añadiremos.
-        if (props.onDeleteUser) props.onDeleteUser(id)
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    })
+    
+    if (result.isConfirmed) {
+      if (props.onDeleteUser) {
+        await props.onDeleteUser(id)
+        await Swal.fire({
+          title: 'Eliminado',
+          text: 'El usuario ha sido eliminado',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
+      }
     }
   }
 

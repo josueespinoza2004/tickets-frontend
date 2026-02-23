@@ -6,6 +6,7 @@ import NewTicketForm from "@/components/tickets/new-ticket-form"
 import UsersManagement from "@/components/users/users-management"
 import ReportsView from "@/components/reports/reports-view"
 import Statistics from "@/components/stats/statistics"
+import Swal from 'sweetalert2'
 
 export default function AdminDashboard({ currentSection }) {
   const [tickets, setTickets] = useState([])
@@ -42,9 +43,22 @@ export default function AdminDashboard({ currentSection }) {
         // Recargar tickets
         const data = await ticketsAPI.getAll()
         setTickets(data)
+        
+        await Swal.fire({
+          title: 'Éxito',
+          text: 'Incidencia creada correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error creating ticket:", error)
-        alert("Error al crear ticket")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo crear la incidencia',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -56,9 +70,22 @@ export default function AdminDashboard({ currentSection }) {
         // Recargar desde el servidor para tener datos actualizados
         const data = await ticketsAPI.getAll()
         setTickets(data)
+        
+        await Swal.fire({
+          title: 'Actualizado',
+          text: 'Incidencia actualizada correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error updating ticket:", error)
-        alert("Error al actualizar ticket")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar la incidencia',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -72,7 +99,12 @@ export default function AdminDashboard({ currentSection }) {
         setTickets(data)
     } catch (error) {
         console.error("Error deleting ticket:", error)
-        alert("Error al eliminar ticket")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo eliminar la incidencia',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -86,9 +118,22 @@ export default function AdminDashboard({ currentSection }) {
         if (Array.isArray(usersData)) {
             setUsers(usersData)
         }
+        
+        await Swal.fire({
+          title: 'Éxito',
+          text: 'Usuario creado correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error creating user:", error)
-        alert("Error al crear usuario: " + error.message)
+        await Swal.fire({
+          title: 'Error',
+          text: error.message || 'No se pudo crear el usuario',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -102,9 +147,22 @@ export default function AdminDashboard({ currentSection }) {
         if (Array.isArray(usersData)) {
             setUsers(usersData)
         }
+        
+        await Swal.fire({
+          title: 'Actualizado',
+          text: 'Usuario actualizado correctamente',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false
+        })
     } catch (error) {
         console.error("Error updating user:", error)
-        alert("Error al actualizar usuario")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo actualizar el usuario',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 
@@ -120,7 +178,12 @@ export default function AdminDashboard({ currentSection }) {
         }
     } catch (error) {
         console.error("Error deleting user:", error)
-        alert("Error al eliminar usuario")
+        await Swal.fire({
+          title: 'Error',
+          text: 'No se pudo eliminar el usuario',
+          icon: 'error',
+          confirmButtonColor: '#2563eb'
+        })
     }
   }
 

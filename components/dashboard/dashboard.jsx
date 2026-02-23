@@ -8,10 +8,25 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 
 export default function Dashboard({ user, onLogout }) {
-  const [currentSection, setCurrentSection] = useState("tickets")
+  // Recuperar la sección guardada o usar "tickets" por defecto
+  const [currentSection, setCurrentSection] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('currentSection') || "tickets"
+    }
+    return "tickets"
+  })
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const isAdmin = user?.role === "admin"
+
+  // Guardar la sección actual cuando cambie
+  const handleSectionChange = (section) => {
+    setCurrentSection(section)
+    setSidebarOpen(false)
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('currentSection', section)
+    }
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -31,10 +46,7 @@ export default function Dashboard({ user, onLogout }) {
         <Sidebar
           user={user}
           currentSection={currentSection}
-          onSectionChange={(section) => {
-            setCurrentSection(section)
-            setSidebarOpen(false) // Cerrar sidebar en móvil al seleccionar
-          }}
+          onSectionChange={handleSectionChange}
           onLogout={onLogout}
           isAdmin={isAdmin}
           onClose={() => setSidebarOpen(false)}
