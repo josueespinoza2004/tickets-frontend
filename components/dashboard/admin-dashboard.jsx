@@ -79,10 +79,12 @@ export default function AdminDashboard({ currentSection }) {
   const handleAddUser = async (newUser) => {
     try {
         const { usersAPI } = await import("@/lib/api")
-        const response = await usersAPI.create(newUser)
-        if (response && response.id) {
-            // Refetch or append locally
-            setUsers(prev => [...prev, { ...newUser, id: response.id }])
+        await usersAPI.create(newUser)
+        
+        // Recargar la lista completa desde el servidor para obtener todos los datos
+        const usersData = await usersAPI.getAll()
+        if (Array.isArray(usersData)) {
+            setUsers(usersData)
         }
     } catch (error) {
         console.error("Error creating user:", error)
@@ -94,8 +96,12 @@ export default function AdminDashboard({ currentSection }) {
     try {
         const { usersAPI } = await import("@/lib/api")
         await usersAPI.update(id, updatedUser)
-        // Update local state
-        setUsers(prev => prev.map(u => u.id === id ? { ...u, ...updatedUser } : u))
+        
+        // Recargar la lista completa desde el servidor para obtener datos actualizados
+        const usersData = await usersAPI.getAll()
+        if (Array.isArray(usersData)) {
+            setUsers(usersData)
+        }
     } catch (error) {
         console.error("Error updating user:", error)
         alert("Error al actualizar usuario")
@@ -106,8 +112,12 @@ export default function AdminDashboard({ currentSection }) {
     try {
         const { usersAPI } = await import("@/lib/api")
         await usersAPI.delete(id)
-        // Update local state
-        setUsers(prev => prev.filter(u => u.id !== id))
+        
+        // Recargar la lista completa desde el servidor
+        const usersData = await usersAPI.getAll()
+        if (Array.isArray(usersData)) {
+            setUsers(usersData)
+        }
     } catch (error) {
         console.error("Error deleting user:", error)
         alert("Error al eliminar usuario")
