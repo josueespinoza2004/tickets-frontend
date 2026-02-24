@@ -124,7 +124,8 @@ export default function Statistics({ tickets }) {
                   outerRadius={100}
                   paddingAngle={5}
                   dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                  labelLine={true}
                 >
                   {stats.statusChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -148,7 +149,7 @@ export default function Statistics({ tickets }) {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                <Bar dataKey="value" radius={[8, 8, 0, 0]} label={{ position: 'top', fill: '#374151', fontWeight: 'bold' }}>
                   {stats.priorityChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -171,7 +172,7 @@ export default function Statistics({ tickets }) {
               <XAxis type="number" />
               <YAxis dataKey="name" type="category" width={120} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" fill="#3b82f6" radius={[0, 8, 8, 0]} />
+              <Bar dataKey="value" fill="#3b82f6" radius={[0, 8, 8, 0]} label={{ position: 'right', fill: '#374151', fontWeight: 'bold' }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
