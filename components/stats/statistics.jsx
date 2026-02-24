@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { 
   BarChart, Bar, PieChart, Pie, Cell, LineChart, Line,
@@ -8,22 +8,48 @@ import {
 } from 'recharts'
 
 export default function Statistics({ tickets }) {
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
+  const [filteredTickets, setFilteredTickets] = useState(tickets)
+
+  useEffect(() => {
+    let filtered = [...tickets]
+
+    if (startDate) {
+      filtered = filtered.filter((t) => {
+        const dateVal = t.incident_date || t.created_at || t.createdAt
+        if (!dateVal) return false
+        return dateVal.substring(0, 10) >= startDate
+      })
+    }
+
+    if (endDate) {
+      filtered = filtered.filter((t) => {
+        const dateVal = t.incident_date || t.created_at || t.createdAt
+        if (!dateVal) return false
+        return dateVal.substring(0, 10) <= endDate
+      })
+    }
+
+    setFilteredTickets(filtered)
+  }, [startDate, endDate, tickets])
+
   const stats = useMemo(() => {
-    const total = tickets.length
+    const total = filteredTickets.length
     const byStatus = {
-      "Sin Empezar": tickets.filter((t) => t.status === "Sin Empezar").length,
-      "En curso": tickets.filter((t) => t.status === "En curso").length,
-      Listo: tickets.filter((t) => t.status === "Listo").length,
+      "Sin Empezar": filteredTickets.filter((t) => t.status === "Sin Empezar").length,
+      "En curso": filteredTickets.filter((t) => t.status === "En curso").length,
+      Listo: filteredTickets.filter((t) => t.status === "Listo").length,
     }
 
     const byPriority = {
-      Alta: tickets.filter((t) => t.priority === "Alta").length,
-      Media: tickets.filter((t) => t.priority === "Media").length,
-      Baja: tickets.filter((t) => t.priority === "Baja").length,
+      Alta: filteredTickets.filter((t) => t.priority === "Alta").length,
+      Media: filteredTickets.filter((t) => t.priority === "Media").length,
+      Baja: filteredTickets.filter((t) => t.priority === "Baja").length,
     }
 
     const bySucursal = {}
-    tickets.forEach((t) => {
+    filteredTickets.forEach((t) => {
       const branch = t.branch_name || "Sin Sucursal"
       bySucursal[branch] = (bySucursal[branch] || 0) + 1
     })
@@ -46,7 +72,7 @@ export default function Statistics({ tickets }) {
       .sort((a, b) => b.value - a.value)
 
     return { total, byStatus, byPriority, bySucursal, statusChartData, priorityChartData, sucursalChartData }
-  }, [tickets])
+  }, [filteredTickets])
 
   const StatCard = ({ label, value, color, icon, bgGradient }) => (
     <Card className={`${bgGradient} border-none shadow-lg hover:shadow-xl transition-shadow`}>
@@ -78,6 +104,51 @@ export default function Statistics({ tickets }) {
 
   return (
     <div className="space-y-6">
+      {/* Filtro de Fechas */}
+      <div className="bg-white rounded-lg shadow-lg border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4">
+          <h3 className="text-lg font-semibold">Filtrar por Período</h3>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Fecha Desde</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">Fecha Hasta</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-3 py-2 border border-input rounded-md bg-input focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          {(startDate || endDate) && (
+            <div className="mt-4 flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Mostrando {filteredTickets.length} de {tickets.length} incidencias
+              </span>
+              <button
+                onClick={() => {
+                  setStartDate("")
+                  setEndDate("")
+                }}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                Limpiar filtros
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Cards principales con iconos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard 
