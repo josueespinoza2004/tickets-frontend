@@ -2,6 +2,10 @@
 
 import { useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { 
+  BarChart, Bar, PieChart, Pie, Cell, LineChart, Line,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+} from 'recharts'
 
 export default function Statistics({ tickets }) {
   const stats = useMemo(() => {
@@ -24,111 +28,203 @@ export default function Statistics({ tickets }) {
       bySucursal[branch] = (bySucursal[branch] || 0) + 1
     })
 
-    return { total, byStatus, byPriority, bySucursal }
+    // Datos para gráficos
+    const statusChartData = [
+      { name: 'Sin Empezar', value: byStatus["Sin Empezar"], color: '#6b7280' },
+      { name: 'En Curso', value: byStatus["En curso"], color: '#3b82f6' },
+      { name: 'Completadas', value: byStatus["Listo"], color: '#10b981' }
+    ]
+
+    const priorityChartData = [
+      { name: 'Alta', value: byPriority.Alta, color: '#ef4444' },
+      { name: 'Media', value: byPriority.Media, color: '#eab308' },
+      { name: 'Baja', value: byPriority.Baja, color: '#10b981' }
+    ]
+
+    const sucursalChartData = Object.entries(bySucursal)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+
+    return { total, byStatus, byPriority, bySucursal, statusChartData, priorityChartData, sucursalChartData }
   }, [tickets])
 
-  const StatCard = ({ label, value, color }) => (
-    <Card className="bg-gradient-to-br from-white to-secondary/20">
+  const StatCard = ({ label, value, color, icon, bgGradient }) => (
+    <Card className={`${bgGradient} border-none shadow-lg hover:shadow-xl transition-shadow`}>
       <CardContent className="pt-6">
-        <p className="text-sm text-muted-foreground mb-1">{label}</p>
-        <p className={`text-3xl font-bold ${color}`}>{value}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-white/80 mb-1">{label}</p>
+            <p className={`text-4xl font-bold text-white`}>{value}</p>
+          </div>
+          <div className="text-5xl opacity-20">{icon}</div>
+        </div>
       </CardContent>
     </Card>
   )
 
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
+          <p className="font-semibold text-gray-800">{payload[0].name}</p>
+          <p className="text-sm text-gray-600">
+            Cantidad: <span className="font-bold">{payload[0].value}</span>
+          </p>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div className="space-y-6">
-      {/* Cards principales */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total de Incidencias" value={stats.total} color="text-primary" />
-        <StatCard label="Sin Empezar" value={stats.byStatus["Sin Empezar"]} color="text-gray-600" />
-        <StatCard label="En Curso" value={stats.byStatus["En curso"]} color="text-blue-600" />
-        <StatCard label="Completadas" value={stats.byStatus["Listo"]} color="text-accent" />
+      {/* Cards principales con iconos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard 
+          label="Total de Incidencias" 
+          value={stats.total} 
+          icon="📊"
+          bgGradient="bg-gradient-to-br from-blue-500 to-blue-700"
+        />
+        <StatCard 
+          label="Sin Empezar" 
+          value={stats.byStatus["Sin Empezar"]} 
+          icon="⏸️"
+          bgGradient="bg-gradient-to-br from-gray-500 to-gray-700"
+        />
+        <StatCard 
+          label="En Curso" 
+          value={stats.byStatus["En curso"]} 
+          icon="⚡"
+          bgGradient="bg-gradient-to-br from-blue-400 to-blue-600"
+        />
+        <StatCard 
+          label="Completadas" 
+          value={stats.byStatus["Listo"]} 
+          icon="✅"
+          bgGradient="bg-gradient-to-br from-green-500 to-green-700"
+        />
       </div>
 
-      {/* Gráficos de estado */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
-          <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
-            <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Incidencias por Tipo</h3>
+      {/* Gráficos principales */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Gráfico de Dona - Estados */}
+        <div className="bg-white rounded-lg shadow-lg border border-border overflow-hidden">
+          <div className="bg-gradient-to-r from-primary to-blue-600 text-white px-6 py-4">
+            <h3 className="text-lg font-semibold">Distribución por Estado</h3>
           </div>
-
           <div className="p-6">
-            <div className="space-y-3">
-              {Object.entries(stats.byPriority).map(([priority, count]) => (
-                <div key={priority}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium text-foreground">{priority}</span>
-                    <span className="font-bold text-primary">{count}</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all ${
-                        priority === "Alta" ? "bg-destructive" : priority === "Media" ? "bg-yellow-500" : "bg-accent"
-                      }`}
-                      style={{ width: `${stats.total > 0 ? (count / stats.total) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={stats.statusChartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {stats.statusChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
-          <div className="bg-gradient-to-r from-secondary to-blue-300">
-            <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Incidencias por Sucursal</h3>
+        {/* Gráfico de Barras - Prioridades */}
+        <div className="bg-white rounded-lg shadow-lg border border-border overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-6 py-4">
+            <h3 className="text-lg font-semibold">Incidencias por Prioridad</h3>
           </div>
-
           <div className="p-6">
-            <div className="space-y-3">
-              {Object.entries(stats.bySucursal).map(([sucursal, count]) => (
-                <div key={sucursal}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="font-medium text-foreground">{sucursal}</span>
-                    <span className="font-bold text-primary">{count}</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="h-2 rounded-full bg-blue-500 transition-all"
-                      style={{ width: `${stats.total > 0 ? (count / stats.total) * 100 : 0}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={stats.priorityChartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  {stats.priorityChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Tabla de resumen */}
-      <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
-        <div className="bg-gradient-to-r from-primary to-blue-600 text-white">
-          <h3 className="text-lg sm:text-xl font-semibold px-6 py-4">Resumen General</h3>
+      {/* Gráfico de Sucursales */}
+      <div className="bg-white rounded-lg shadow-lg border border-border overflow-hidden">
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-4">
+          <h3 className="text-lg font-semibold">Incidencias por Sucursal</h3>
         </div>
-
         <div className="p-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-secondary/20 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Tasa de Completación</p>
-              <p className="text-2xl font-bold text-accent">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={stats.sucursalChartData} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis type="number" />
+              <YAxis dataKey="name" type="category" width={120} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="value" fill="#3b82f6" radius={[0, 8, 8, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Resumen con métricas clave */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-lg border border-border p-6 hover:shadow-xl transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-2xl">
+              📈
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Tasa de Completación</p>
+              <p className="text-3xl font-bold text-green-600">
                 {stats.total > 0 ? Math.round((stats.byStatus["Listo"] / stats.total) * 100) : 0}%
               </p>
             </div>
+          </div>
+        </div>
 
-            <div className="p-4 bg-secondary/20 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Incidencias Urgentes</p>
-              <p className="text-2xl font-bold text-destructive">{stats.byPriority["Alta"]}</p>
+        <div className="bg-white rounded-lg shadow-lg border border-border p-6 hover:shadow-xl transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-2xl">
+              🚨
             </div>
-
-            <div className="p-4 bg-secondary/20 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">En Progreso</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.byStatus["En curso"]}</p>
+            <div>
+              <p className="text-sm text-muted-foreground">Incidencias Urgentes</p>
+              <p className="text-3xl font-bold text-red-600">{stats.byPriority["Alta"]}</p>
             </div>
+          </div>
+        </div>
 
-            <div className="p-4 bg-secondary/20 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Pendientes</p>
-              <p className="text-2xl font-bold text-gray-600">{stats.byStatus["Sin Empezar"]}</p>
+        <div className="bg-white rounded-lg shadow-lg border border-border p-6 hover:shadow-xl transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl">
+              ⚙️
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">En Progreso</p>
+              <p className="text-3xl font-bold text-blue-600">{stats.byStatus["En curso"]}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-lg border border-border p-6 hover:shadow-xl transition-shadow">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-2xl">
+              ⏳
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Pendientes</p>
+              <p className="text-3xl font-bold text-gray-600">{stats.byStatus["Sin Empezar"]}</p>
             </div>
           </div>
         </div>
