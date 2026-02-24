@@ -33,7 +33,7 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
       <div className="p-4 sm:p-6 border-b border-primary-foreground/15">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-lg flex items-center justify-center p-1">
+            <div className="w-16 h-16 sm:w-16 sm:h-16 flex items-center justify-center">
               <img
                 src="./coopefacsa.png"
                 alt="COOPEFACSA"
