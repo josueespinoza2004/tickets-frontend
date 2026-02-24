@@ -85,12 +85,12 @@ export default function Sidebar({ user, currentSection, onSectionChange, onLogou
           </p>
         </div>
         
-        {/* Botón logout para móvil */}
+        {/* Botón logout visible en todas las pantallas */}
         <Button
           onClick={onLogout}
           variant="ghost"
           size="sm"
-          className="w-full lg:hidden text-primary-foreground hover:bg-primary-foreground/10 text-xs"
+          className="w-full text-primary-foreground hover:bg-primary-foreground/10 text-xs"
         >
           Cerrar Sesión
         </Button>

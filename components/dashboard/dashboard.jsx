@@ -78,25 +78,7 @@ export default function Dashboard({ user, onLogout }) {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* <div className="hidden sm:block">
-              <span className="text-sm text-muted-foreground">{user?.name || user?.email}</span>
-            </div> */}
-            {/* <span
-              className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold ${
-                isAdmin ? "bg-destructive/10 text-destructive" : "bg-accent/10 text-accent"
-              }`}
-            >
-              {isAdmin ? "Admin" : "Usuario"}
-            </span> */}
-            <Button
-              onClick={onLogout}
-              variant="outline"
-              size="sm"
-              className="text-destructive hover:bg-destructive/10 bg-transparent text-xs sm:text-sm px-2 sm:px-4"
-            >
-              <span className="hidden sm:inline">Cerrar Sesión</span>
-              <span className="sm:hidden">Salir</span>
-            </Button>
+            {/* Información del usuario podría ir aquí si se necesita */}
           </div>
         </div>
 
