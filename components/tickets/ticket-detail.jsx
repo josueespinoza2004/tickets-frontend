@@ -62,8 +62,14 @@ export default function TicketDetail({ ticket, onBack, onUpdate, onDelete, isAdm
           <h3 className="text-lg sm:text-2xl font-semibold">Incidencia #{ticket.id}</h3>
           <p className="text-blue-100 text-sm sm:text-base">{ticket.title}</p>
         </div>
-        <Button onClick={onBack} variant="outline" className="bg-white text-primary hover:bg-white/90 text-sm sm:text-base">
-          ← Volver
+        <Button 
+          onClick={onBack} 
+          className="bg-white/10 hover:bg-white/20 text-white border border-white/30 backdrop-blur-sm transition-all shadow-lg hover:shadow-xl flex items-center gap-2 text-sm sm:text-base"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Volver
         </Button>
       </div>
 
