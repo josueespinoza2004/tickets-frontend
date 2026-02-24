@@ -346,7 +346,7 @@ export default function ReportsView({ tickets, isAdmin }) {
             <table className="w-full text-sm">
               <thead className="bg-muted border-b border-border">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold">ID</th>
+                  {isAdmin && <th className="px-4 py-2 text-left font-semibold">ID</th>}
                   <th className="px-4 py-2 text-left font-semibold">Nombre de tarea</th>
                   <th className="px-4 py-2 text-left font-semibold">Estado</th>
                   <th className="px-4 py-2 text-left font-semibold">Responsable</th>
@@ -359,7 +359,7 @@ export default function ReportsView({ tickets, isAdmin }) {
               <tbody>
                 {currentTickets.map((ticket) => (
                   <tr key={ticket.id} className="border-b border-border hover:bg-secondary/30">
-                    <td className="px-4 py-2">#{ticket.id}</td>
+                    {isAdmin && <td className="px-4 py-2">#{ticket.id}</td>}
                     <td className="px-4 py-2 font-medium">{ticket.title}</td>
                     <td className="px-4 py-2">
                       <span
