@@ -1,0 +1,20 @@
+# Next.js Static Export Configuration
+RewriteEngine On
+RewriteBase /tickets/
+
+# Permitir acceso directo a archivos y directorios existentes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todas las rutas a index.html (SPA routing)
+RewriteRule ^(.*)$ index.html [L,QSA]
+
+# Configuración de tipos MIME
+AddType application/javascript .js
+AddType application/json .json
+AddType text/css .css
+AddType image/svg+xml .svg
+AddType image/x-icon .ico
+AddType image/png .png
+AddType image/jpeg .jpg .jpeg
+AddType image/webp .webp

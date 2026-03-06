@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  distDir: 'tickets',
+  basePath: '/tickets',
   trailingSlash: true,
-  assetPrefix: '.',
   typescript: {
     ignoreBuildErrors: true,
   },
