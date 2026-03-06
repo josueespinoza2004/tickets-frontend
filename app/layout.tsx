@@ -12,19 +12,19 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/coopefacsa.png',
+        url: '/tickets/coopefacsa.png',
         media: '(prefers-color-scheme: light)',
       },
       {
-        url: '/coopefacsa.png',
+        url: '/tickets/coopefacsa.png',
         media: '(prefers-color-scheme: dark)',
       },
       {
-        url: '/coopefacsa.png',
+        url: '/tickets/coopefacsa.png',
         type: 'image/svg+xml',
       },
     ],
-    apple: '/coopefacsa.png',
+    apple: '/tickets/coopefacsa.png',
   },
 }
 
